@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "414684221032",
+    "project_id": "mashora-8f7dd",
+    "storage_bucket": "mashora-8f7dd.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:414684221032:android:3dbc5f2c2b7febb143b5dd",
+        "android_client_info": {
+          "package_name": "com.mfe"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAHn06ASg7xYzxjFYmKjN3RmoebVGoQqMY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
