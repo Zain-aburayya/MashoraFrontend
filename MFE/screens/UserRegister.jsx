@@ -4,7 +4,7 @@ import Checkbox from './components/Checkbox';
 import isValidName from './validation/Username';
 import isValidEmail from './validation/Email';
 import isValidPhoneNumber from './validation/PhoneNumber';
-import auth from '@react-native-firebase/auth';
+// import auth from '@react-native-firebase/auth';
 import {useNavigation} from '@react-navigation/native';
 
 import {
@@ -103,35 +103,35 @@ export default function UserRegister() {
       ]);
     } else {
       // auth().currentUser.reload();
-      signup();
-      console.log(auth().currentUser.password);
+      // signup();
+      // console.log(auth().currentUser.password);
     }
   }
 
-  useEffect(() => {
-    const unsubscribe = auth().onAuthStateChanged(user => {
-      setCurrentUser(user);
-    });
+  // useEffect(() => {
+  //   const unsubscribe = auth().onAuthStateChanged(user => {
+  //     setCurrentUser(user);
+  //   });
 
-    return unsubscribe;
-  }, []);
+  //   return unsubscribe;
+  // }, []);
 
   function handleOnChange(value, feildName) {
     setUserInfo({...userInfo, [feildName]: value});
   }
 
-  const signup = async () => {
-    try {
-      const {user} = await auth().createUserWithEmailAndPassword(
-        email,
-        password,
-      );
-      await user.sendEmailVerification();
-      Alert.alert('Verification email sent! Please check your inbox.');
-    } catch (err) {
-      Alert.alert(err.message);
-    }
-  };
+  // const signup = async () => {
+  //   try {
+  //     const {user} = await auth().createUserWithEmailAndPassword(
+  //       email,
+  //       password,
+  //     );
+  //     await user.sendEmailVerification();
+  //     Alert.alert('Verification email sent! Please check your inbox.');
+  //   } catch (err) {
+  //     Alert.alert(err.message);
+  //   }
+  // };
 
   return (
     <>

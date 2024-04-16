@@ -11,7 +11,7 @@ import React, {useState} from 'react';
 import {useNavigation} from '@react-navigation/native';
 import isValidEmail from './validation/Email';
 import {isValidPassword} from './validation/Password';
-import auth from '@react-native-firebase/auth';
+// import auth from '@react-native-firebase/auth';
 
 function Title() {
   return (
@@ -50,19 +50,19 @@ function LoginScreen() {
     if (!isValidEmail(email) || !isValidPassword(password)) {
       Alert.alert('خطأ في تسجيل الدخول', errorMessage, [{text: 'حسناً'}]);
     }
-    const currentUser = await auth().signInWithEmailAndPassword(
-      email,
-      password,
-    );
-    const user = currentUser.user;
-    if (user) {
-      const isEmailVerified = user.emailVerified;
-      if (isEmailVerified) {
-        console.log('User is signed in and email is verified.');
-      } else {
-        console.log('User is signed in but email is not verified.');
-      }
-    }
+    // const currentUser = await auth().signInWithEmailAndPassword(
+    //   email,
+    //   password,
+    // );
+    // const user = currentUser.user;
+    // if (user) {
+    //   const isEmailVerified = user.emailVerified;
+    //   if (isEmailVerified) {
+    //     console.log('User is signed in and email is verified.');
+    //   } else {
+    //     console.log('User is signed in but email is not verified.');
+    //   }
+    // }
   }
 
   return (
