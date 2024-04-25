@@ -1,8 +1,13 @@
 import React from 'react';
-import {Text, View} from 'react-native';
-import UserRegister from './screens/UserRegister';
-import LawyerRegister from './screens/LawyerRegister';
-import LoginScreen from './screens/LoginScreen';
+import UserRegister from './screens/UserRegisterUI';
+import LawyerRegister from './screens/LawyerRegisterUI';
+import LawyerInfo from './screens/LawyerInfoUI';
+import LoginScreen from './screens/LoginScreenUI';
+import ResetPassword from './screens/ResetPasswordUI';
+import SettingsUI from './screens/SettingsUI';
+import ContactUs from './screens/ContactusUI';
+import AboutUs from './screens/AboutusUI';
+import Wallet from './screens/walletUI';
 import {NavigationContainer} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 
@@ -11,7 +16,7 @@ const Stack = createNativeStackNavigator();
 function App() {
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName="LoginScreen">
+      <Stack.Navigator initialRouteName="Wallet">
         <Stack.Screen
           name="UserRegister"
           component={UserRegister}
@@ -22,11 +27,17 @@ function App() {
           component={LawyerRegister}
           options={{headerBackVisible: false}}
         />
+        <Stack.Screen name="LawyerInfo" component={LawyerInfo} />
         <Stack.Screen
           name="LoginScreen"
           component={LoginScreen}
           options={{headerBackVisible: false}}
         />
+        <Stack.Screen name="ResetPassword" component={ResetPassword} />
+        <Stack.Screen name="Settings" component={SettingsUI} />
+        <Stack.Screen name="ContactUs" component={ContactUs} />
+        <Stack.Screen name="AboutUs" component={AboutUs} />
+        <Stack.Screen name="Wallet" component={Wallet} />
       </Stack.Navigator>
     </NavigationContainer>
   );

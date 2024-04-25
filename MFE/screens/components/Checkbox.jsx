@@ -1,3 +1,4 @@
+/* eslint-disable react-native/no-inline-styles */
 import React from 'react';
 import BouncyCheckbox from 'react-native-bouncy-checkbox';
 
@@ -10,18 +11,21 @@ const CustomCheckbox = ({
   textStyle = {fontFamily: 'JosefinSans-Regular'},
   onPress,
   isChecked,
+  style,
 }) => {
   const textStyleWithDirection = {
     ...textStyle,
     marginRight: 20,
   };
-
+  if (style === undefined) {
+    style = {
+      textAlign: 'right',
+      flexDirection: 'row-reverse',
+    };
+  }
   return (
     <BouncyCheckbox
-      style={{
-        textAlign: 'right',
-        flexDirection: 'row-reverse',
-      }}
+      style={style}
       size={size}
       fillColor={fillColor}
       unFillColor={unFillColor}

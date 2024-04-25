@@ -1,10 +1,9 @@
+/* eslint-disable react-native/no-inline-styles */
 import React, {useState} from 'react';
-import {useEffect} from 'react';
 import Checkbox from './components/Checkbox';
 import isValidName from './validation/Username';
 import isValidEmail from './validation/Email';
 import isValidPhoneNumber from './validation/PhoneNumber';
-// import auth from '@react-native-firebase/auth';
 import {useNavigation} from '@react-navigation/native';
 
 import {
@@ -49,9 +48,8 @@ function ButtonReuse({text, onPress}) {
 }
 
 export default function UserRegister() {
-  // for check box
   const [checkBoxState, setCheckBoxState] = useState(false);
-  const [currentUser, setCurrentUser] = useState(null);
+  // const [currentUser, setCurrentUser] = useState(null);
   const [userInfo, setUserInfo] = useState({
     firstname: '',
     lastname: '',
@@ -82,7 +80,7 @@ export default function UserRegister() {
         {text: 'حسناً'},
       ]);
     } /*else if(isUsedEmail(email)){
-
+      TODO Check if Email is used or not 
     }*/ else if (!isValidEmail(email)) {
       Alert.alert('خطأ في البريد الإلكتروني', errorMessages.email, [
         {text: 'حسناً'},
@@ -102,6 +100,7 @@ export default function UserRegister() {
         {text: 'حسناً'},
       ]);
     } else {
+      // TODO Add an API call
       // auth().currentUser.reload();
       // signup();
       // console.log(auth().currentUser.password);

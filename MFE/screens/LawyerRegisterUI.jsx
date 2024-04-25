@@ -19,6 +19,7 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
+import LawyerInfo from './LawyerInfoUI';
 
 function Title() {
   return (
@@ -28,9 +29,7 @@ function Title() {
   );
 }
 
-function LoginButton() {
-  const navigation = useNavigation();
-
+function LoginButton({navigation, lawyerInfo}) {
   return (
     <TouchableOpacity
       style={styles.button}
@@ -49,8 +48,8 @@ function ButtonReuse({text, onPress}) {
 }
 
 export default function LawyerRegister() {
-  // for check box
-  const [checkBoxState, setCheckBoxState] = useState(false);
+  const navigation = useNavigation();
+
   const [lawyerInfo, setUserInfo] = useState({
     firstname: '',
     lastname: '',
@@ -84,33 +83,34 @@ export default function LawyerRegister() {
   };
 
   function handlePress() {
-    if (!isValidName(lastname) || !isValidName(firstname)) {
-      Alert.alert('خطأ في الإسم الاول او الأخير', errorMessages.name, [
-        {text: 'حسناً'},
-      ]);
-    } /*else if(isUsedEmail(email)){
-
-    }*/ else if (!isValidEmail(email)) {
-      Alert.alert('خطأ في البريد الإلكتروني', errorMessages.email, [
-        {text: 'حسناً'},
-      ]);
-    } else if (!isValidPhoneNumber(phoneNumber)) {
-      Alert.alert('خطأ في رقم الهاتف', errorMessages.phone, [{text: 'حسناً'}]);
-    } else if (!isValidPassword(password)) {
-      Alert.alert('خطأ في كلمة السر', errorMessages.password, [
-        {text: 'حسناً'},
-      ]);
-    } else if (!confirmPasswordValidation(password, confirmPassword)) {
-      Alert.alert('خطأ في تأكيد كلمة السر', errorMessages.confirmPassword, [
-        {text: 'حسناً'},
-      ]);
-    } else if (!checkBoxState) {
-      Alert.alert('لم توافق على الشروط', errorMessages.checkBox, [
-        {text: 'حسناً'},
-      ]);
-    } else {
-      console.log(lawyerInfo);
-    }
+    // TODO Uncomment these lines
+    // if (!isValidName(lastname) || !isValidName(firstname)) {
+    //   Alert.alert('خطأ في الإسم الاول او الأخير', errorMessages.name, [
+    //     {text: 'حسناً'},
+    //   ]);
+    // } /*else if(isUsedEmail(email)){
+    // }*/ else if (!isValidEmail(email)) {
+    //   Alert.alert('خطأ في البريد الإلكتروني', errorMessages.email, [
+    //     {text: 'حسناً'},
+    //   ]);
+    // } else if (!isValidPhoneNumber(phoneNumber)) {
+    //   Alert.alert('خطأ في رقم الهاتف', errorMessages.phone, [{text: 'حسناً'}]);
+    // } else if (!isValidPassword(password)) {
+    //   Alert.alert('خطأ في كلمة السر', errorMessages.password, [
+    //     {text: 'حسناً'},
+    //   ]);
+    // } else if (!confirmPasswordValidation(password, confirmPassword)) {
+    //   Alert.alert('خطأ في تأكيد كلمة السر', errorMessages.confirmPassword, [
+    //     {text: 'حسناً'},
+    //   ]);
+    // } else if (!checkBoxState) {
+    //   Alert.alert('لم توافق على الشروط', errorMessages.checkBox, [
+    //     {text: 'حسناً'},
+    //   ]);
+    // } else {
+    //   console.log(lawyerInfo);
+    // }
+    navigation.navigate('LawyerInfo', {lawyerInfo: lawyerInfo});
   }
 
   function handleOnChange(value, feildName) {
@@ -121,7 +121,7 @@ export default function LawyerRegister() {
     <>
       <View style={styles.container}>
         <Title />
-        <LoginButton />
+        <LoginButton navigation={navigation} lawyerInfo={lawyerInfo} />
 
         <View style={styles.inputContainer}>
           <View style={styles.nameInput}>
@@ -197,11 +197,6 @@ export default function LawyerRegister() {
           keyboardType="number-pad"
           placeholder="رقم مزاولة المهنة"
           onChangeText={e => handleOnChange(e, 'ppn')}
-        />
-        <Checkbox
-          text="من خلال إنشاء حساب، فإنك توافق على شروط الاستخدام وسياسة
-          الخصوصية الخاصة بنا "
-          onPress={isChecked => setCheckBoxState(isChecked)}
         />
         <ButtonReuse text="متابعة التسجيل" onPress={handlePress} />
       </View>

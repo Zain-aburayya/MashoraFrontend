@@ -11,7 +11,6 @@ import React, {useState} from 'react';
 import {useNavigation} from '@react-navigation/native';
 import isValidEmail from './validation/Email';
 import {isValidPassword} from './validation/Password';
-// import auth from '@react-native-firebase/auth';
 
 function Title() {
   return (
@@ -50,6 +49,7 @@ function LoginScreen() {
     if (!isValidEmail(email) || !isValidPassword(password)) {
       Alert.alert('خطأ في تسجيل الدخول', errorMessage, [{text: 'حسناً'}]);
     }
+    // TODO Add an API for Login process
     // const currentUser = await auth().signInWithEmailAndPassword(
     //   email,
     //   password,
