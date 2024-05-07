@@ -6,7 +6,7 @@ function isValidName(name: string): boolean {
 }
 
 function nameValidation(name: string): boolean {
-  if (name.trim().length < 3 || name.trim().length > 25) {
+  if (name.trim().length < 2 || name.trim().length > 25) {
     return false;
   }
   return true;
@@ -18,7 +18,7 @@ function nameValidation(name: string): boolean {
 // }
 
 function nameRegexArabic(name: string): boolean {
-  const validNameRegex = /^[\u0600-\u06FF-]+$/u;
+  const validNameRegex = /^[\u0600-\u06FF\s-]+$/u;
   return validNameRegex.test(name.trim());
 }
 

@@ -10,13 +10,14 @@ import AboutUs from './screens/AboutusUI';
 import Wallet from './screens/walletUI';
 import {NavigationContainer} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
+import TestAPI from './screens/testAPI';
 
 const Stack = createNativeStackNavigator();
 
 function App() {
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName="Wallet">
+      <Stack.Navigator initialRouteName="TestAPI">
         <Stack.Screen
           name="UserRegister"
           component={UserRegister}
@@ -38,6 +39,7 @@ function App() {
         <Stack.Screen name="ContactUs" component={ContactUs} />
         <Stack.Screen name="AboutUs" component={AboutUs} />
         <Stack.Screen name="Wallet" component={Wallet} />
+        <Stack.Screen name="TestAPI" component={TestAPI} />
       </Stack.Navigator>
     </NavigationContainer>
   );
