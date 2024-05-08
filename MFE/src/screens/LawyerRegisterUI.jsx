@@ -1,10 +1,10 @@
 /* eslint-disable react-native/no-inline-styles */
 import React, {useState} from 'react';
 import {useEffect} from 'react';
-import Checkbox from './components/Checkbox';
-import isValidName from './validation/Username';
-import isValidEmail from './validation/Email';
-import isValidPhoneNumber from './validation/PhoneNumber';
+import Checkbox from '../components/Checkbox';
+import isValidName from '../validation/Username';
+import isValidEmail from '../validation/Email';
+import isValidPhoneNumber from '../validation/PhoneNumber';
 import {useNavigation} from '@react-navigation/native';
 import {
   isValidPassword,

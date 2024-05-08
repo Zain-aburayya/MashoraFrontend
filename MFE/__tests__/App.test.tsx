@@ -8,10 +8,10 @@ import 'react-native';
 
 // Note: import explicitly to use the types shipped with jest.
 import {it, describe, expect} from '@jest/globals';
-import isValidEmail from '../screens/validation/Email';
-import isValidName from '../screens/validation/Username';
-import {isValidPassword} from '../screens/validation/Password';
-import isValidPhoneNumber from '../screens/validation/PhoneNumber';
+import isValidEmail from '../src/screens/validation/Email';
+import isValidName from '../src/screens/validation/Username';
+import {isValidPassword} from '../src/screens/validation/Password';
+import isValidPhoneNumber from '../src/screens/validation/PhoneNumber';
 
 describe('First Name & Last Name Testing', () => {
   it('Valid for first/last name with length equal to 2 (طه).', () => {

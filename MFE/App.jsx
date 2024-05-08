@@ -1,23 +1,23 @@
 import React from 'react';
-import UserRegister from './screens/UserRegisterUI';
-import LawyerRegister from './screens/LawyerRegisterUI';
-import LawyerInfo from './screens/LawyerInfoUI';
-import LoginScreen from './screens/LoginScreenUI';
-import ResetPassword from './screens/ResetPasswordUI';
-import SettingsUI from './screens/SettingsUI';
-import ContactUs from './screens/ContactusUI';
-import AboutUs from './screens/AboutusUI';
-import Wallet from './screens/walletUI';
+import UserRegister from './src/screens/UserRegisterUI';
+import LawyerRegister from './src/screens/LawyerRegisterUI';
+import LawyerInfo from './src/screens/LawyerInfoUI';
+import LoginScreen from './src/screens/LoginScreenUI';
+import ResetPassword from './src/screens/ResetPasswordUI';
+import SettingsUI from './src/screens/SettingsUI';
+import ContactUs from './src/screens/ContactusUI';
+import AboutUs from './src/screens/AboutusUI';
+import Wallet from './src/screens/walletUI';
 import {NavigationContainer} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
-import TestAPI from './screens/testAPI';
+import TestAPI from './src/screens/testAPI';
 
 const Stack = createNativeStackNavigator();
 
 function App() {
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName="TestAPI">
+      <Stack.Navigator initialRouteName="LoginScreen">
         <Stack.Screen
           name="UserRegister"
           component={UserRegister}

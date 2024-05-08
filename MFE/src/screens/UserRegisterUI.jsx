@@ -1,15 +1,16 @@
 /* eslint-disable react-native/no-inline-styles */
 import React, {useState} from 'react';
-import Checkbox from './components/Checkbox';
-import isValidName from './validation/Username';
-import isValidEmail from './validation/Email';
-import isValidPhoneNumber from './validation/PhoneNumber';
+import Checkbox from '../components/Checkbox';
+import isValidName from '../validation/Username';
+import isValidEmail from '../validation/Email';
+import isValidPhoneNumber from '../validation/PhoneNumber';
 import {useNavigation} from '@react-navigation/native';
+import {BASE_URL} from '../constants/constant';
 
 import {
   isValidPassword,
   confirmPasswordValidation,
-} from './validation/Password';
+} from '../validation/Password';
 
 import {
   Alert,
@@ -28,8 +29,7 @@ function Title() {
   );
 }
 
-function LoginButton() {
-  const navigation = useNavigation();
+function LoginButton({navigation}) {
   return (
     <TouchableOpacity
       style={styles.button}
@@ -48,9 +48,11 @@ function ButtonReuse({text, onPress}) {
 }
 
 export default function UserRegister() {
+  const navigation = useNavigation();
   const [checkBoxState, setCheckBoxState] = useState(false);
   // const [currentUser, setCurrentUser] = useState(null);
   const [userInfo, setUserInfo] = useState({
+    username: '',
     firstname: '',
     lastname: '',
     phoneNumber: '',
@@ -60,10 +62,18 @@ export default function UserRegister() {
   });
   const [showPassword, setShowPassword] = useState(false);
 
-  const {firstname, lastname, phoneNumber, email, password, confirmPassword} =
-    userInfo;
+  const {
+    username,
+    firstname,
+    lastname,
+    phoneNumber,
+    email,
+    password,
+    confirmPassword,
+  } = userInfo;
 
   const errorMessages = {
+    username: 'اسم المستخدم المدخل غير صالح.',
     name: 'يجب أن يكون الاسم الأول والأخير أكثر من حرفين وأقل من 26 حرفًا، ويجب أن يحتوي فقط على أحرف عربية.',
     email: 'البريد الإلكتروني غير صحيح، يرجى إدخاله مرة أخرى.',
     phone:
@@ -75,13 +85,19 @@ export default function UserRegister() {
   };
 
   function handlePress() {
-    if (!isValidName(lastname) || !isValidName(firstname)) {
+    console.log(username);
+    if (!isValidName(username, 'username')) {
+      Alert.alert('خطأ في اسم المستخدم', errorMessages.username, [
+        {text: 'حسناً'},
+      ]);
+    } else if (
+      !isValidName(lastname, 'name') ||
+      !isValidName(firstname, 'name')
+    ) {
       Alert.alert('خطأ في الإسم الاول او الأخير', errorMessages.name, [
         {text: 'حسناً'},
       ]);
-    } /*else if(isUsedEmail(email)){
-      TODO Check if Email is used or not 
-    }*/ else if (!isValidEmail(email)) {
+    } else if (!isValidEmail(email)) {
       Alert.alert('خطأ في البريد الإلكتروني', errorMessages.email, [
         {text: 'حسناً'},
       ]);
@@ -100,44 +116,73 @@ export default function UserRegister() {
         {text: 'حسناً'},
       ]);
     } else {
-      // TODO Add an API call
-      // auth().currentUser.reload();
-      // signup();
-      // console.log(auth().currentUser.password);
+      signup();
     }
   }
-
-  // useEffect(() => {
-  //   const unsubscribe = auth().onAuthStateChanged(user => {
-  //     setCurrentUser(user);
-  //   });
-
-  //   return unsubscribe;
-  // }, []);
 
   function handleOnChange(value, feildName) {
     setUserInfo({...userInfo, [feildName]: value});
   }
 
-  // const signup = async () => {
-  //   try {
-  //     const {user} = await auth().createUserWithEmailAndPassword(
-  //       email,
-  //       password,
-  //     );
-  //     await user.sendEmailVerification();
-  //     Alert.alert('Verification email sent! Please check your inbox.');
-  //   } catch (err) {
-  //     Alert.alert(err.message);
-  //   }
-  // };
+  const signup = async () => {
+    const apiUrl = BASE_URL + 'auth/signup';
+    const option = {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({username, email, password, role: ['user']}),
+    };
+    try {
+      const response = await fetch(apiUrl, option);
+
+      if (!response.ok) {
+        console.log(response);
+        if (response.status === 400) {
+          const responseData = await response.json();
+          if (responseData.message === 'Error: Email is already in use!') {
+            Alert.alert(
+              'البريد الاكتروني مستخدم',
+              'الرجاء استخدام بريد الكتروني آخر.',
+              [{text: 'حسناً'}],
+            );
+          } else if (
+            responseData.message === 'Error: Username is already taken!'
+          ) {
+            Alert.alert(
+              'اسم المستخدم مُستخدم بالفعل',
+              'الرجاء ادحل اسم مستخدم جديد.',
+              [{text: 'حسناً'}],
+            );
+          }
+        }
+        throw new Error(`HTTP error! status: ${response}`);
+      }
+
+      const responseData = await response.json(); // Use response.text() for plain string
+      console.log(responseData);
+      Alert.alert(
+        'تم إضافتك كمستخدم جديد',
+        'الرجاء قم تأكيد بريدك الاكتروني للسماح لك بالدخول.',
+        [{text: 'حسناً', onPress: () => navigation.navigate('LoginScreen')}],
+      );
+    } catch (err) {
+      console.log('error : ', err);
+    }
+  };
 
   return (
     <>
       <View style={styles.container}>
         <Title />
-        <LoginButton />
-
+        <LoginButton navigation={navigation} />
+        <TextInput
+          style={styles.input}
+          placeholderTextColor={'black'}
+          value={username}
+          placeholder="اسم المستخدم"
+          onChangeText={e => handleOnChange(e, 'username')}
+        />
         <View style={styles.inputContainer}>
           <View style={styles.nameInput}>
             <TextInput

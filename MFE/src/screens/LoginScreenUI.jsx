@@ -9,8 +9,8 @@ import {
 } from 'react-native';
 import React, {useState} from 'react';
 import {useNavigation} from '@react-navigation/native';
-import isValidEmail from './validation/Email';
-import {isValidPassword} from './validation/Password';
+import isValidEmail from '../validation/Email';
+import {isValidPassword} from '../validation/Password';
 
 function Title() {
   return (

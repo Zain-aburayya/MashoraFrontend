@@ -1,12 +1,13 @@
 import React, {useState, useEffect} from 'react';
 import {View, Text, ActivityIndicator} from 'react-native';
+import BASE_URL from '../constants/constant';
 
 const TestAPi = () => {
   const [data, setData] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  const apiUrl = 'http://10.0.2.2:8080/api/test/customer';
+  const apiUrl = 'http://10.0.2.2:8080/api/test/user';
 
   useEffect(() => {
     const fetchData = async () => {

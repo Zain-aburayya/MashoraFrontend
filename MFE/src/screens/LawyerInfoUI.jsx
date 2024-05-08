@@ -1,7 +1,7 @@
 /* eslint-disable react-native/no-inline-styles */
 import React, {useState} from 'react';
 import {Image, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
-import Checkbox from './components/Checkbox';
+import Checkbox from '../components/Checkbox';
 import DocumentPicker from 'react-native-document-picker';
 import {pick} from 'react-native-document-picker';
 
