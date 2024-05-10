@@ -50,20 +50,21 @@ function LoginScreen() {
   function handleLogin() {
     if (!isValidName(username, 'username') || !isValidPassword(password)) {
       Alert.alert('خطأ في تسجيل الدخول', errorMessage, [{text: 'حسناً'}]);
-    } else {
-      user_login({
-        username: username,
-        password: password,
-      })
-        .then(result => {
-          if (result.status === 200) {
-            AsyncStorage.setItem('AccessToken', result.data.token);
-          }
-        })
-        .catch(err => {
-          console.error(err);
-        });
     }
+    // else {
+    //   user_login({
+    //     username: username,
+    //     password: password,
+    //   })
+    //     .then(result => {
+    //       if (result.status === 200) {
+    //         AsyncStorage.setItem('AccessToken', result.data.token);
+    //       }
+    //     })
+    //     .catch(err => {
+    //       console.error(err);
+    //     });
+    // }
   }
 
   return (

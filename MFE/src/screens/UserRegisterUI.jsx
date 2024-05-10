@@ -115,7 +115,7 @@ export default function UserRegister() {
         {text: 'حسناً'},
       ]);
     } else {
-      handleSignUp();
+      //handleSignUp();
       //navigation.navigate('ChatListLawyer');
     }
   }
