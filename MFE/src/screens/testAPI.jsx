@@ -1,6 +1,5 @@
 import React, {useState, useEffect} from 'react';
 import {View, Text, ActivityIndicator} from 'react-native';
-import BASE_URL from '../constants/constant';
 
 const TestAPi = () => {
   const [data, setData] = useState(null);

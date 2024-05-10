@@ -5,7 +5,6 @@ import isValidName from '../validation/Username';
 import isValidEmail from '../validation/Email';
 import isValidPhoneNumber from '../validation/PhoneNumber';
 import {useNavigation} from '@react-navigation/native';
-import {BASE_URL} from '../constants/constant';
 
 import {
   isValidPassword,
@@ -51,7 +50,6 @@ function ButtonReuse({text, onPress}) {
 export default function UserRegister() {
   const navigation = useNavigation();
   const [checkBoxState, setCheckBoxState] = useState(false);
-  // const [currentUser, setCurrentUser] = useState(null);
   const [userInfo, setUserInfo] = useState({
     username: '',
     firstname: '',

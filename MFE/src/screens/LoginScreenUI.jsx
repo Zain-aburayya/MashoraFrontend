@@ -9,8 +9,10 @@ import {
 } from 'react-native';
 import React, {useState} from 'react';
 import {useNavigation} from '@react-navigation/native';
-import isValidEmail from '../validation/Email';
 import {isValidPassword} from '../validation/Password';
+import {user_login} from '../api/user_api';
+import isValidName from '../validation/Username';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 function Title() {
   return (
@@ -29,40 +31,39 @@ function ButtonReuse({text, onPress}) {
 }
 
 function LoginScreen() {
+  const navigation = useNavigation();
+
   const [Info, setInfo] = useState({
-    email: '',
+    username: '',
     password: '',
   });
   const [showPassword, setShowPassword] = useState(false);
 
-  const {email, password} = Info;
+  const {username, password} = Info;
 
-  const navigation = useNavigation();
-
-  const errorMessage = 'هناك خطأ في كلمة المرور او البريد الالكتروني';
+  const errorMessage = 'هناك خطأ في كلمة المرور او اسم المستخدم';
 
   function handleOnChange(value, feildName) {
     setInfo({...Info, [feildName]: value});
   }
 
-  async function handleLogin() {
-    if (!isValidEmail(email) || !isValidPassword(password)) {
+  function handleLogin() {
+    if (!isValidName(username, 'username') || !isValidPassword(password)) {
       Alert.alert('خطأ في تسجيل الدخول', errorMessage, [{text: 'حسناً'}]);
+    } else {
+      user_login({
+        username: username,
+        password: password,
+      })
+        .then(result => {
+          if (result.status === 200) {
+            AsyncStorage.setItem('AccessToken', result.data.token);
+          }
+        })
+        .catch(err => {
+          console.error(err);
+        });
     }
-    // TODO Add an API for Login process
-    // const currentUser = await auth().signInWithEmailAndPassword(
-    //   email,
-    //   password,
-    // );
-    // const user = currentUser.user;
-    // if (user) {
-    //   const isEmailVerified = user.emailVerified;
-    //   if (isEmailVerified) {
-    //     console.log('User is signed in and email is verified.');
-    //   } else {
-    //     console.log('User is signed in but email is not verified.');
-    //   }
-    // }
   }
 
   return (
@@ -87,10 +88,9 @@ function LoginScreen() {
       <TextInput
         style={styles.input}
         placeholderTextColor={'black'}
-        value={email}
-        keyboardType="email-address"
-        placeholder="البريد الالكتروني"
-        onChangeText={e => handleOnChange(e, 'email')}
+        value={username}
+        placeholder="اسم المستخدم"
+        onChangeText={e => handleOnChange(e, 'username')}
       />
       <TextInput
         style={[styles.input, {textAlign: 'right'}]}

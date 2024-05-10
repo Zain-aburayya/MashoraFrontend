@@ -14,13 +14,14 @@ import TestAPI from './src/screens/testAPI';
 import ChatListLawyer from './src/screens/ChatListLawyer';
 import Chat from './src/screens/Chat';
 import ChatListUser from './src/screens/ChatListUser';
+import Splash from './src/screens/Splash';
 
 const Stack = createNativeStackNavigator();
 
 function App() {
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName="ChatListLawyer">
+      <Stack.Navigator initialRouteName="Splash">
         <Stack.Screen
           name="UserRegister"
           component={UserRegister}
@@ -54,6 +55,7 @@ function App() {
         />
         <Stack.Screen name="ResetPassword" component={ResetPassword} />
         <Stack.Screen name="Settings" component={SettingsUI} />
+        <Stack.Screen name="Splash" component={Splash} />
         <Stack.Screen name="ContactUs" component={ContactUs} />
         <Stack.Screen name="AboutUs" component={AboutUs} />
         <Stack.Screen name="Wallet" component={Wallet} />
