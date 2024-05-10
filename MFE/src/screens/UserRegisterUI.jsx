@@ -20,6 +20,7 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
+import {user_signup} from '../api/user_api';
 
 function Title() {
   return (
@@ -116,8 +117,8 @@ export default function UserRegister() {
         {text: 'حسناً'},
       ]);
     } else {
-      //signup();
-      navigation.navigate("ChatListLawyer");
+      handleSignUp();
+      //navigation.navigate('ChatListLawyer');
     }
   }
 
@@ -125,51 +126,35 @@ export default function UserRegister() {
     setUserInfo({...userInfo, [feildName]: value});
   }
 
-  const signup = async () => {
-    const apiUrl = BASE_URL + 'auth/signup';
-    const option = {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({username, email, password, role: ['user']}),
-    };
-    try {
-      const response = await fetch(apiUrl, option);
-
-      if (!response.ok) {
-        console.log(response);
-        if (response.status === 400) {
-          const responseData = await response.json();
-          if (responseData.message === 'Error: Email is already in use!') {
-            Alert.alert(
-              'البريد الاكتروني مستخدم',
-              'الرجاء استخدام بريد الكتروني آخر.',
-              [{text: 'حسناً'}],
-            );
-          } else if (
-            responseData.message === 'Error: Username is already taken!'
-          ) {
-            Alert.alert(
-              'اسم المستخدم مُستخدم بالفعل',
-              'الرجاء ادحل اسم مستخدم جديد.',
-              [{text: 'حسناً'}],
-            );
-          }
+  const handleSignUp = () => {
+    user_signup({
+      username: username,
+      firstname: firstname,
+      lastname: lastname,
+      phoneNumber: phoneNumber,
+      email: email,
+      password: password,
+    })
+      .then(result => {
+        if (result.status === 200) {
+          navigation.navigate('Settings');
+        } else if (result.message === 'Error: Username is already taken!') {
+          Alert.alert(
+            'اسم المستخدم مُستخدم من قبل.',
+            'يرجى استخدام اسم مستخدم آخر.',
+            [{text: 'حسناً'}],
+          );
+        } else if (result.message === 'Error: Email is already in use!') {
+          Alert.alert(
+            'البريد الاكتروني مُستخدم من قبل.',
+            'يرجى استخدام اسم بريد الكتروني آخر.',
+            [{text: 'حسناً'}],
+          );
         }
-        throw new Error(`HTTP error! status: ${response}`);
-      }
-
-      const responseData = await response.json(); // Use response.text() for plain string
-      console.log(responseData);
-      Alert.alert(
-        'تم إضافتك كمستخدم جديد',
-        'الرجاء قم تأكيد بريدك الاكتروني للسماح لك بالدخول.',
-        [{text: 'حسناً', onPress: () => navigation.navigate('LoginScreen')}],
-      );
-    } catch (err) {
-      console.log('error : ', err);
-    }
+      })
+      .catch(err => {
+        console.error(err);
+      });
   };
 
   return (
