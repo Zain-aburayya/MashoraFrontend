@@ -15,13 +15,16 @@ import ChatListLawyer from './src/screens/ChatListLawyer';
 import Chat from './src/screens/Chat';
 import ChatListUser from './src/screens/ChatListUser';
 import Splash from './src/screens/Splash';
-
+import LawyerPostPage from './src/screens/LawyerPostPage';
+import LawyerChatList from './src/screens/LawyerChatList';
+import ChatBot from './src/screens/ChatBot';
+import LawyerMain from './src/screens/LawyerMain';
 const Stack = createNativeStackNavigator();
 
 function App() {
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName="Splash">
+      <Stack.Navigator initialRouteName="LawyerMain">
         <Stack.Screen
           name="UserRegister"
           component={UserRegister}
@@ -52,6 +55,26 @@ function App() {
           name="ChatListUser"
           component={ChatListUser}
           options={{headerBackVisible: false}}
+        />
+        <Stack.Screen
+          name="LawyerPostPage"
+          component={LawyerPostPage}
+          options={{headerBackVisible: false}}
+        />
+        <Stack.Screen
+          name="LawyerChatList"
+          component={LawyerChatList}
+          options={{LawyerChatList: false}}
+        />
+        <Stack.Screen
+          name="ChatBot"
+          component={ChatBot}
+          options={{LawyerChatList: false}}
+        />
+        <Stack.Screen
+          name="LawyerMain"
+          component={LawyerMain}
+          options={{LawyerChatList: false}}
         />
         <Stack.Screen name="ResetPassword" component={ResetPassword} />
         <Stack.Screen name="Settings" component={SettingsUI} />
