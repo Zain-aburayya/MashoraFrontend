@@ -115,7 +115,7 @@ export default function UserRegister() {
         {text: 'حسناً'},
       ]);
     } else {
-      //handleSignUp();
+      handleSignUp();
       //navigation.navigate('ChatListLawyer');
     }
   }
@@ -135,7 +135,7 @@ export default function UserRegister() {
     })
       .then(result => {
         if (result.status === 200) {
-          navigation.navigate('Settings');
+          navigation.navigate('LoginScreen');
         } else if (result.message === 'Error: Username is already taken!') {
           Alert.alert(
             'اسم المستخدم مُستخدم من قبل.',

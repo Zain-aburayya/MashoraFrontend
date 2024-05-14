@@ -1,11 +1,11 @@
 import React from 'react';
 import {Text, View} from 'react-native';
 
-const ChatListLawyer = () => {
+const LawyerChatList = () => {
   return (
     <View>
-      <Text>Chat List Lawyer</Text>
+      <Text>LawyerChatList</Text>
     </View>
   );
 };
-export default ChatListLawyer;
+export default LawyerChatList;

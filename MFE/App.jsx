@@ -15,16 +15,17 @@ import ChatListLawyer from './src/screens/ChatListLawyer';
 import Chat from './src/screens/Chat';
 import ChatListUser from './src/screens/ChatListUser';
 import Splash from './src/screens/Splash';
-import LawyerPostPage from './src/screens/LawyerPostPage';
-import LawyerChatList from './src/screens/LawyerChatList';
+import LawyerPostPage from './src/screens/PostMain';
+import LawyerChatList from './src/screens/ChatList';
 import ChatBot from './src/screens/ChatBot';
-import LawyerMain from './src/screens/LawyerMain';
+import Main from './src/screens/Main';
+import PostUI from './src/screens/PostUI';
 const Stack = createNativeStackNavigator();
 
 function App() {
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName="LawyerMain">
+      <Stack.Navigator initialRouteName="LoginScreen">
         <Stack.Screen
           name="UserRegister"
           component={UserRegister}
@@ -72,8 +73,8 @@ function App() {
           options={{LawyerChatList: false}}
         />
         <Stack.Screen
-          name="LawyerMain"
-          component={LawyerMain}
+          name="Main"
+          component={Main}
           options={{LawyerChatList: false}}
         />
         <Stack.Screen name="ResetPassword" component={ResetPassword} />
@@ -83,6 +84,7 @@ function App() {
         <Stack.Screen name="AboutUs" component={AboutUs} />
         <Stack.Screen name="Wallet" component={Wallet} />
         <Stack.Screen name="TestAPI" component={TestAPI} />
+        <Stack.Screen name="PostUI" component={PostUI} />
       </Stack.Navigator>
     </NavigationContainer>
   );

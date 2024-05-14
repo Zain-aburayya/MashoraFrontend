@@ -1,8 +1,8 @@
 import {View, Text, StyleSheet, TouchableOpacity, Image} from 'react-native';
 import React, {useState} from 'react';
 import ChatBot from './ChatBot';
-import LawyerChatList from './LawyerChatList';
-import LawyerPostPage from './LawyerPostPage';
+import ChatList from './ChatList';
+import PostPage from './PostMain';
 const LawyerMain = () => {
   const [selectedTab, setSelectedTab] = useState(1);
   return (
@@ -10,9 +10,9 @@ const LawyerMain = () => {
       {selectedTab === 1 ? (
         <ChatBot />
       ) : selectedTab === 0 ? (
-        <LawyerChatList />
+        <ChatList />
       ) : (
-        <LawyerPostPage />
+        <PostPage />
       )}
       <View style={styles.bottomTab}>
         <TouchableOpacity

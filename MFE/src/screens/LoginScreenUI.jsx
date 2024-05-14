@@ -13,6 +13,7 @@ import {isValidPassword} from '../validation/Password';
 import {user_login} from '../api/user_api';
 import isValidName from '../validation/Username';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import {get_posts} from '../api/post_api';
 
 function Title() {
   return (
@@ -50,21 +51,35 @@ function LoginScreen() {
   function handleLogin() {
     if (!isValidName(username, 'username') || !isValidPassword(password)) {
       Alert.alert('خطأ في تسجيل الدخول', errorMessage, [{text: 'حسناً'}]);
+    } else {
+      user_login({
+        username: username,
+        password: password,
+      })
+        .then(result => {
+          if (result.status === 200) {
+            AsyncStorage.setItem('token', result.data.token);
+            AsyncStorage.setItem('role', result.data.roles[0]);
+            // TODO :: save username , role and id
+            console.log(result.data);
+            console.log(result.data.token);
+            console.log(result.data.roles[0]);
+            get_posts()
+              .then(result_1 => {
+                if (result_1.status === 200) {
+                  navigation.navigate('Main');
+                  // console.log(result_1.data.data);
+                }
+              })
+              .catch(err => {
+                console.error(err);
+              });
+          }
+        })
+        .catch(err => {
+          console.error(err);
+        });
     }
-    // else {
-    //   user_login({
-    //     username: username,
-    //     password: password,
-    //   })
-    //     .then(result => {
-    //       if (result.status === 200) {
-    //         AsyncStorage.setItem('AccessToken', result.data.token);
-    //       }
-    //     })
-    //     .catch(err => {
-    //       console.error(err);
-    //     });
-    // }
   }
 
   return (
