@@ -1,11 +1,11 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import ApiManager from './ApiManager';
 
-export const get_posts = async () => {
+export const get_posts = async data => {
   try {
     const token = await AsyncStorage.getItem('token');
 
-    const result = await ApiManager('/questions/pages?page=1&size=2', {
+    const result = await ApiManager(`/questions/pages?page=1&size=3`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
@@ -14,7 +14,7 @@ export const get_posts = async () => {
     });
     return result;
   } catch (err) {
-    return err.response.data;
+    return err.response;
   }
 };
 

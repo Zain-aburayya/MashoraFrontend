@@ -20,6 +20,7 @@ import LawyerChatList from './src/screens/ChatList';
 import ChatBot from './src/screens/ChatBot';
 import Main from './src/screens/Main';
 import PostUI from './src/screens/PostUI';
+import PostQuestion from './src/screens/PostQuestion';
 const Stack = createNativeStackNavigator();
 
 function App() {
@@ -85,6 +86,7 @@ function App() {
         <Stack.Screen name="Wallet" component={Wallet} />
         <Stack.Screen name="TestAPI" component={TestAPI} />
         <Stack.Screen name="PostUI" component={PostUI} />
+        <Stack.Screen name="PostQuestion" component={PostQuestion} />
       </Stack.Navigator>
     </NavigationContainer>
   );

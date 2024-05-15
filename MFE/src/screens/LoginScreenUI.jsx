@@ -64,16 +64,7 @@ function LoginScreen() {
             console.log(result.data);
             console.log(result.data.token);
             console.log(result.data.roles[0]);
-            get_posts()
-              .then(result_1 => {
-                if (result_1.status === 200) {
-                  navigation.navigate('Main');
-                  // console.log(result_1.data.data);
-                }
-              })
-              .catch(err => {
-                console.error(err);
-              });
+            navigation.navigate('Main');
           }
         })
         .catch(err => {

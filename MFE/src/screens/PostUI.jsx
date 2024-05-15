@@ -68,6 +68,7 @@ function PostUI({route}) {
 
   useEffect(() => {
     onRefresh();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
