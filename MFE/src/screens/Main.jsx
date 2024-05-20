@@ -2,9 +2,9 @@ import {View, Text, StyleSheet, TouchableOpacity, Image} from 'react-native';
 import React, {useState} from 'react';
 import ChatBot from './ChatBot';
 import ChatList from './ChatList';
-import PostPage from './PostMain';
+import PostMain from './PostMain';
 const LawyerMain = () => {
-  const [selectedTab, setSelectedTab] = useState(1);
+  const [selectedTab, setSelectedTab] = useState(2);
   return (
     <View style={styles.container}>
       {selectedTab === 1 ? (
@@ -12,7 +12,7 @@ const LawyerMain = () => {
       ) : selectedTab === 0 ? (
         <ChatList />
       ) : (
-        <PostPage />
+        <PostMain />
       )}
       <View style={styles.bottomTab}>
         <TouchableOpacity
