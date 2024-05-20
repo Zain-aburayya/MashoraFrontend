@@ -19,7 +19,6 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import LawyerInfo from './LawyerInfoUI';
 
 function Title() {
   return (

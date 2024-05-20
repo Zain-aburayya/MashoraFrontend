@@ -4,9 +4,8 @@ import {useNavigation} from '@react-navigation/native';
 import React, {useEffect, useState} from 'react';
 import {
   FlatList,
+  Image,
   RefreshControl,
-  SafeAreaView,
-  ScrollView,
   StatusBar,
   StyleSheet,
   Text,
@@ -15,10 +14,10 @@ import {
   View,
 } from 'react-native';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
-import {get_post_comments, send_comment} from '../api/post_api';
+import {get_post_comments, set_comment} from '../api/post_api';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const Item = ({data}) => {
+const Item = ({data, navigation}) => {
   const date = new Date(data.timestamp);
   const hours = String(date.getHours()).padStart(2, '0');
   const minutes = String(date.getMinutes()).padStart(2, '0');
@@ -27,7 +26,21 @@ const Item = ({data}) => {
   const ymd = date.getFullYear() + '-' + month + '-' + day;
   return (
     <View style={styles.item}>
-      <Text style={styles.title}>{data.username}</Text>
+      <View>
+        <TouchableOpacity
+          style={styles.profileContainer}
+          onPress={() => {
+            navigation.navigate('ClickedProfile', {
+              userInfo: {username: data.username},
+            });
+          }}>
+          <Image
+            source={require('./Images/profile.png')}
+            style={styles.image}
+          />
+          <Text style={styles.title}>{data.username}</Text>
+        </TouchableOpacity>
+      </View>
       <Text style={styles.title}>{data.content}</Text>
       <View style={styles.bottomContainer}>
         <TouchableOpacity style={styles.button}>
@@ -49,6 +62,7 @@ function PostUI({route}) {
   const [content, setContent] = useState('');
   const [role, setRole] = useState('');
   const [refreshing, setRefreshing] = useState(false);
+  const navigation = useNavigation();
 
   const onRefresh = () => {
     setRefreshing(true);
@@ -79,7 +93,7 @@ function PostUI({route}) {
 
   function handleQuerySend({id}) {
     console.log(id);
-    send_comment({id: id, content: content})
+    set_comment({id: id, content: content})
       .then(result => {
         if (result.status === 201) {
           console.log('comment -> ', result.data);
@@ -101,7 +115,21 @@ function PostUI({route}) {
   return (
     <View style={styles.container}>
       <View style={styles.card}>
-        <Text style={styles.title}>{data.username}</Text>
+        <View>
+          <TouchableOpacity
+            style={styles.profileContainer}
+            onPress={() => {
+              navigation.navigate('ClickedProfile', {
+                userInfo: {username: data.username},
+              });
+            }}>
+            <Image
+              source={require('./Images/profile.png')}
+              style={styles.imagePost}
+            />
+            <Text style={styles.title}>{data.username}</Text>
+          </TouchableOpacity>
+        </View>
         <Text style={styles.title}>{data.title}</Text>
         <Text>{data.content}</Text>
         <View style={styles.bottomContainer}>
@@ -110,7 +138,7 @@ function PostUI({route}) {
       </View>
       <FlatList
         data={comments}
-        renderItem={({item}) => <Item data={item} />}
+        renderItem={({item}) => <Item data={item} navigation={navigation} />}
         keyExtractor={item => item.id}
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
@@ -213,6 +241,18 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     flexDirection: 'row',
     justifyContent: 'space-evenly',
+    alignItems: 'center',
+  },
+  image: {
+    width: 50,
+    height: 50,
+  },
+  imagePost: {
+    width: 100,
+    height: 100,
+  },
+  profileContainer: {
+    flexDirection: 'row-reverse',
     alignItems: 'center',
   },
   button: {

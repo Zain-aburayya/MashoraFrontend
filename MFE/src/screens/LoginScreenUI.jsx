@@ -8,12 +8,11 @@ import {
   View,
 } from 'react-native';
 import React, {useState} from 'react';
-import {useNavigation} from '@react-navigation/native';
+import {useLinkBuilder, useNavigation} from '@react-navigation/native';
 import {isValidPassword} from '../validation/Password';
 import {user_login} from '../api/user_api';
 import isValidName from '../validation/Username';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {get_posts} from '../api/post_api';
 
 function Title() {
   return (
@@ -56,15 +55,30 @@ function LoginScreen() {
         username: username,
         password: password,
       })
-        .then(result => {
+        .then(async result => {
           if (result.status === 200) {
-            AsyncStorage.setItem('token', result.data.token);
-            AsyncStorage.setItem('role', result.data.roles[0]);
-            // TODO :: save username , role and id
+            const {token, roles, username, id, email} = result.data;
             console.log(result.data);
-            console.log(result.data.token);
-            console.log(result.data.roles[0]);
-            navigation.navigate('Main');
+            // Prepare the data to be saved
+            const items = [
+              ['token', token],
+              ['role', roles[0]],
+              ['username', username],
+              ['email', email],
+              ['id', id.toString()], // Convert id to string as AsyncStorage stores only strings
+            ];
+
+            try {
+              await AsyncStorage.multiSet(items);
+              console.log(result.data);
+              console.log(token);
+              console.log(roles[0]);
+              console.log(email);
+              console.log(username);
+              navigation.navigate('Main');
+            } catch (error) {
+              console.error('Error saving data to AsyncStorage:', error);
+            }
           }
         })
         .catch(err => {

@@ -1,13 +1,11 @@
-import React from "react";
-import { Text, View } from "react-native";
+import React from 'react';
+import {Text, View} from 'react-native';
 
-
-const ChatBot=()=>{
-  return(
+const ChatBot = () => {
+  return (
     <View>
-        <Text>ChatBot</Text>
+      <Text>ChatBot</Text>
     </View>
-    
-  )
-}   
+  );
+};
 export default ChatBot;

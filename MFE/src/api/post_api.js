@@ -5,13 +5,16 @@ export const get_posts = async data => {
   try {
     const token = await AsyncStorage.getItem('token');
 
-    const result = await ApiManager(`/questions/pages?page=1&size=3`, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`,
+    const result = await ApiManager(
+      `/questions/pages?page=${data.page}&size=4`,
+      {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
       },
-    });
+    );
     return result;
   } catch (err) {
     return err.response;
@@ -35,7 +38,7 @@ export const get_post_comments = async data => {
   }
 };
 
-export const send_comment = async data => {
+export const set_comment = async data => {
   try {
     const token = await AsyncStorage.getItem('token');
 
@@ -46,6 +49,24 @@ export const send_comment = async data => {
         Authorization: `Bearer ${token}`,
       },
       data: data.content,
+    });
+    return result;
+  } catch (err) {
+    return err.response.data;
+  }
+};
+
+export const set_post = async data => {
+  try {
+    const token = await AsyncStorage.getItem('token');
+
+    const result = await ApiManager('/questions', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      data: data,
     });
     return result;
   } catch (err) {
