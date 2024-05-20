@@ -10,23 +10,24 @@ import AboutUs from './src/screens/AboutusUI';
 import Wallet from './src/screens/walletUI';
 import {NavigationContainer} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
-import TestAPI from './src/screens/testAPI';
 import ChatListLawyer from './src/screens/ChatListLawyer';
 import Chat from './src/screens/Chat';
 import ChatListUser from './src/screens/ChatListUser';
 import Splash from './src/screens/Splash';
-import LawyerPostPage from './src/screens/PostMain';
-import LawyerChatList from './src/screens/ChatList';
+import PostMain from './src/screens/PostMain';
+import ChatList from './src/screens/ChatList';
 import ChatBot from './src/screens/ChatBot';
 import Main from './src/screens/Main';
 import PostUI from './src/screens/PostUI';
 import PostQuestion from './src/screens/PostQuestion';
+import Profile from './src/screens/Profile';
+import ClickedProfile from './src/screens/ClickedProfile';
 const Stack = createNativeStackNavigator();
 
 function App() {
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName="LoginScreen">
+      <Stack.Navigator initialRouteName="Splash">
         <Stack.Screen
           name="UserRegister"
           component={UserRegister}
@@ -59,34 +60,51 @@ function App() {
           options={{headerBackVisible: false}}
         />
         <Stack.Screen
-          name="LawyerPostPage"
-          component={LawyerPostPage}
+          name="PostMain"
+          component={PostMain}
           options={{headerBackVisible: false}}
         />
         <Stack.Screen
-          name="LawyerChatList"
-          component={LawyerChatList}
-          options={{LawyerChatList: false}}
+          name="ChatList"
+          component={ChatList}
+          options={{headerBackVisible: false}}
         />
         <Stack.Screen
           name="ChatBot"
           component={ChatBot}
-          options={{LawyerChatList: false}}
+          options={{headerBackVisible: false}}
         />
         <Stack.Screen
           name="Main"
           component={Main}
-          options={{LawyerChatList: false}}
+          options={{headerBackVisible: false, headerShown: false}}
         />
         <Stack.Screen name="ResetPassword" component={ResetPassword} />
-        <Stack.Screen name="Settings" component={SettingsUI} />
+        <Stack.Screen
+          name="Settings"
+          component={SettingsUI}
+          options={{headerTitle: 'الاعدادات'}}
+        />
         <Stack.Screen name="Splash" component={Splash} />
-        <Stack.Screen name="ContactUs" component={ContactUs} />
-        <Stack.Screen name="AboutUs" component={AboutUs} />
-        <Stack.Screen name="Wallet" component={Wallet} />
-        <Stack.Screen name="TestAPI" component={TestAPI} />
+        <Stack.Screen
+          name="ContactUs"
+          component={ContactUs}
+          options={{headerTitle: 'إتصل بنا'}}
+        />
+        <Stack.Screen
+          name="AboutUs"
+          component={AboutUs}
+          options={{headerTitle: 'عن مشورة'}}
+        />
+        <Stack.Screen
+          name="Wallet"
+          component={Wallet}
+          options={{headerTitle: 'محفظتي'}}
+        />
         <Stack.Screen name="PostUI" component={PostUI} />
         <Stack.Screen name="PostQuestion" component={PostQuestion} />
+        <Stack.Screen name="Profile" component={Profile} />
+        <Stack.Screen name="ClickedProfile" component={ClickedProfile} />
       </Stack.Navigator>
     </NavigationContainer>
   );

@@ -10,12 +10,15 @@ import {
   FlatList,
   TouchableOpacity,
   RefreshControl,
+  ActivityIndicator,
+  Image,
 } from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {get_posts} from '../api/post_api';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import {useNavigation} from '@react-navigation/native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const Item = ({data}) => {
   const navigation = useNavigation();
@@ -29,7 +32,21 @@ const Item = ({data}) => {
     <View style={styles.item}>
       <TouchableOpacity
         onPress={() => navigation.navigate('PostUI', {data: data})}>
-        <Text style={styles.username}>{data.username}</Text>
+        <View>
+          <TouchableOpacity
+            style={styles.profileContainer}
+            onPress={() => {
+              navigation.navigate('ClickedProfile', {
+                userInfo: {username: data.username},
+              });
+            }}>
+            <Image
+              source={require('./Images/profile.png')}
+              style={styles.imagePost}
+            />
+            <Text style={styles.username}>{data.username}</Text>
+          </TouchableOpacity>
+        </View>
         <Text style={styles.title}>{data.title}</Text>
         <View style={styles.bottomContainer}>
           <Text>{hours + ':' + minutes}</Text>
@@ -51,10 +68,12 @@ const Item = ({data}) => {
 
 const PostMain = () => {
   const navigation = useNavigation();
-  // TODO :: API Call for add a new post
   const [posts, setPosts] = useState([]);
   const [page, setPage] = useState(1);
+  const [role, setRole] = useState('');
   const [refreshing, setRefreshing] = useState(false);
+  const [totalPages, setTotalPages] = useState(0);
+
   const onRefresh = () => {
     setRefreshing(true);
     get_posts({
@@ -62,8 +81,16 @@ const PostMain = () => {
     })
       .then(result => {
         if (result.status === 200) {
-          setPosts(result.data.data.content);
-          setPage(page + 1);
+          setPosts(prevPosts => {
+            // Combine previous posts and new posts
+            const combinedPosts = [...prevPosts, ...result.data.data.content];
+            // Create a Set to remove duplicates
+            const uniquePosts = Array.from(
+              new Set(combinedPosts.map(post => post.id)),
+            ).map(id => combinedPosts.find(post => post.id === id));
+            return uniquePosts;
+          });
+          setTotalPages(result.data.data.totalPages);
         }
       })
       .catch(err => {
@@ -78,6 +105,40 @@ const PostMain = () => {
     onRefresh();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  // to get the role from Async Storage
+  useEffect(() => {
+    AsyncStorage.getItem('role').then(res => {
+      setRole(res);
+    });
+  }, []);
+
+  // for the loader
+  useEffect(() => {
+    get_posts({
+      page: page,
+    })
+      .then(result => {
+        if (result.status === 200) {
+          setPosts(prevPosts => {
+            // Combine previous posts and new posts
+            const combinedPosts = [...prevPosts, ...result.data.data.content];
+            // Create a Set to remove duplicates
+            const uniquePosts = Array.from(
+              new Set(combinedPosts.map(post => post.id)),
+            ).map(id => combinedPosts.find(post => post.id === id));
+            return uniquePosts;
+          });
+        }
+      })
+      .catch(err => {
+        console.log(err);
+      })
+      .finally(() => {
+        setRefreshing(false);
+      });
+  }, [page]);
+
   return (
     <SafeAreaView style={styles.container}>
       <View>
@@ -90,14 +151,22 @@ const PostMain = () => {
           }
         />
       </View>
-      {
-        // TODO :: Just the ROLE_CUSTOME can add a post question
-      }
-      <TouchableOpacity
-        style={styles.addButton}
-        onPress={() => navigation.navigate('PostQuestion')}>
-        <MaterialIcons name="post-add" size={30} color="#FFFFFF" />
-      </TouchableOpacity>
+      {role === 'ROLE_CUSTOMER' && (
+        <TouchableOpacity
+          style={styles.addButton}
+          onPress={() => navigation.navigate('PostQuestion')}>
+          <MaterialIcons name="post-add" size={30} color="#FFFFFF" />
+        </TouchableOpacity>
+      )}
+      {page != totalPages && (
+        <TouchableOpacity
+          style={styles.loadButton}
+          onPress={() => setPage(prevPage => prevPage + 1)}>
+          <Text style={{color: '#FFFFFF', fontSize: 15, fontWeight: 'bold'}}>
+            تحميل المزيد
+          </Text>
+        </TouchableOpacity>
+      )}
     </SafeAreaView>
   );
 };
@@ -105,7 +174,7 @@ const PostMain = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 0.85,
-    marginTop: StatusBar.currentHeight || 0,
+    marginTop: StatusBar.currentHeight + 45 || 0,
   },
   item: {
     backgroundColor: '#CEC3B0',
@@ -142,6 +211,24 @@ const styles = StyleSheet.create({
     borderRadius: 30,
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  loadButton: {
+    position: 'absolute',
+    bottom: -30,
+    left: 20,
+    backgroundColor: '#8A6F42',
+    padding: 15,
+    borderRadius: 30,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  imagePost: {
+    width: 60,
+    height: 60,
+  },
+  profileContainer: {
+    flexDirection: 'row-reverse',
+    alignItems: 'center',
   },
 });
 export default PostMain;

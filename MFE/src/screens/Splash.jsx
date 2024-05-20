@@ -9,12 +9,14 @@ const Splash = () => {
     setTimeout(() => {
       checkLogin();
     }, 2000);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const checkLogin = async () => {
-    const token = await AsyncStorage.getItem('AccessToken');
+    const token = await AsyncStorage.getItem('role');
+    console.log(token);
     if (token !== null) {
-      navigation.navigate('Wallet');
+      navigation.navigate('Main');
     } else {
       navigation.navigate('LoginScreen');
     }

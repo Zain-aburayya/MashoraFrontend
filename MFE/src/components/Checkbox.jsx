@@ -12,6 +12,7 @@ const CustomCheckbox = ({
   onPress,
   isChecked,
   style,
+  flag = false,
 }) => {
   const textStyleWithDirection = {
     ...textStyle,
@@ -34,6 +35,7 @@ const CustomCheckbox = ({
       textStyle={textStyleWithDirection}
       onPress={onPress}
       isChecked={isChecked}
+      disabled={flag}
     />
   );
 };

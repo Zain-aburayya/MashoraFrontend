@@ -1,9 +1,12 @@
 /* eslint-disable react-native/no-inline-styles */
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import {useNavigation} from '@react-navigation/native';
 import React from 'react';
-import {StyleSheet, Text, View} from 'react-native';
+import {Alert, StyleSheet, Text, View} from 'react-native';
 import Entypo from 'react-native-vector-icons/Entypo';
 
-function ButtonReuse({emoji, text, color, backColor}) {
+function ButtonReuse({emoji, text, color, backColor, navigateTo}) {
+  const navigation = useNavigation();
   return (
     <>
       <Entypo.Button
@@ -12,7 +15,7 @@ function ButtonReuse({emoji, text, color, backColor}) {
         size={40}
         backgroundColor={backColor}
         onPress={() => {
-          // TODO Add a new function handler for navigation
+          navigation.navigate(navigateTo);
         }}
         style={{
           flexDirection: 'row-reverse',
@@ -35,6 +38,29 @@ function ButtonReuse({emoji, text, color, backColor}) {
 }
 
 function SettingsUI() {
+  const navigation = useNavigation();
+  function handleLoguot() {
+    Alert.alert('تسجيل الخروج', 'هل أنت متأكد من تسجيل خروجك ؟', [
+      {
+        text: 'لا',
+        onPress: () => null,
+      },
+      {
+        text: 'نعم',
+        onPress: () => {
+          try {
+            let keys = ['token', 'role'];
+            AsyncStorage.multiRemove(keys);
+            console.log('data removed :)');
+            navigation.navigate('LoginScreen');
+          } catch (err) {
+            console.log(err);
+          }
+        },
+      },
+    ]);
+  }
+
   return (
     <View style={styles.container}>
       <ButtonReuse
@@ -42,6 +68,7 @@ function SettingsUI() {
         color={'#8A6F42'}
         backColor={'#E6E0D7'}
         emoji={'user'}
+        navigateTo={'Profile'}
       />
 
       <ButtonReuse
@@ -49,6 +76,7 @@ function SettingsUI() {
         backColor={'#8A6F42'}
         color={'#E6E0D7'}
         emoji={'wallet'}
+        navigateTo={'Wallet'}
       />
 
       <ButtonReuse
@@ -56,6 +84,7 @@ function SettingsUI() {
         color={'#8A6F42'}
         backColor={'#E6E0D7'}
         emoji={'phone'}
+        navigateTo={'ContactUs'}
       />
 
       <ButtonReuse
@@ -63,14 +92,31 @@ function SettingsUI() {
         backColor={'#8A6F42'}
         color={'#E6E0D7'}
         emoji={'text-document'}
+        navigateTo={'AboutUs'}
       />
-
-      <ButtonReuse
-        text={'تسجيل الخروج'}
+      <Entypo.Button
+        name={'log-out'}
         color={'#8A6F42'}
-        backColor={'#E6E0D7'}
-        emoji={'log-out'}
-      />
+        size={40}
+        backgroundColor={'#E6E0D7'}
+        onPress={() => {
+          handleLoguot();
+        }}
+        style={{
+          flexDirection: 'row-reverse',
+          width: 272,
+        }}>
+        <Text
+          style={{
+            fontSize: 25,
+            fontWeight: 'bold',
+            color: '#8A6F42',
+            flex: 1,
+            textAlign: 'center',
+          }}>
+          تسجيل الخروج
+        </Text>
+      </Entypo.Button>
     </View>
   );
 }
