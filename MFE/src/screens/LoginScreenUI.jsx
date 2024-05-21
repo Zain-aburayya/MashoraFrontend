@@ -48,73 +48,64 @@ function LoginScreen() {
     setInfo({...Info, [feildName]: value});
   }
 
-  function handleLogin() {
+  async function handleLogin() {
     if (!isValidName(username, 'username') || !isValidPassword(password)) {
       Alert.alert('خطأ في تسجيل الدخول', errorMessage, [{text: 'حسناً'}]);
-    } else {
-      const usernameCopy = username;
-      user_login({
-        username: username,
-        password: password,
-      })
-        .then(async result => {
-          if (result.status === 200) {
-            firestore()
-              .collection('users')
-              .where('username','==',usernameCopy)
-              .get()
-              .then(res => {
-                if (res.docs != []) {
-                  console.log('from login -> ' , JSON.stringify(res.docs[0].data()));
-                  goToNext(
-                    res.docs[0].data().userId,
-                  );
-                } else {
-                  Alert.alert('User not found');
-                }
-              })
-              .catch(
-                error => {
-                  console.log(error);
-                  Alert.alert('User not found');
-                }
-              )
-            console.log('username from login : ' , username);
-            const {token, roles, username, id, email,userId} = result.data;
-            console.log(result.data);
-            // Prepare the data to be saved
-            const items = [
-              ['token', token],
-              ['role', roles[0]],
-              ['username', username],
-              ['email', email],
-              ['userId', userId],
-              ['id', id.toString()], // Convert id to string as AsyncStorage stores only strings
-            ];
+      return;
+    }
 
-            try {
-              await AsyncStorage.multiSet(items);
-              console.log(result.data);
-              console.log(token);
-              console.log(roles[0]);
-              console.log(email);
-              console.log(username);
-              console.log(userId);
-              navigation.navigate('Main');
-            } catch (error) {
-              console.error('Error saving data to AsyncStorage:', error);
-            }
-          }
-        })
-        .catch(err => {
-          console.error(err);
-        });
-        const goToNext = async (userId) => {
-    await AsyncStorage.setItem('USERID', userId);
-  };
+    try {
+      const result = await user_login({username, password});
+
+      if (result.status === 200) {
+        const userQuerySnapshot = await firestore()
+          .collection('users')
+          .where('username', '==', result.data.username)
+          .get();
+
+        if (!userQuerySnapshot.empty) {
+          console.log(
+            'from login -> ',
+            JSON.stringify(userQuerySnapshot.docs[0].data()),
+          );
+          await goToNext(userQuerySnapshot.docs[0].data().userId);
+        } else {
+          Alert.alert('User not found');
+          return;
+        }
+
+        const {token, roles, username, id, email} = result.data;
+        console.log(result.data);
+
+        // Prepare the data to be saved
+        const items = [
+          ['token', token],
+          ['role', roles[0]],
+          ['username', username],
+          ['email', email],
+          ['id', id.toString()], // Convert id to string as AsyncStorage stores only strings
+        ];
+
+        await AsyncStorage.multiSet(items);
+        console.log(result.data);
+        console.log(token);
+        console.log(roles[0]);
+        console.log(email);
+        console.log(username);
+        navigation.navigate('Main');
+      }
+    } catch (error) {
+      console.error('Error during login:', error);
     }
   }
-  
+
+  const goToNext = async userId => {
+    try {
+      await AsyncStorage.setItem('USERID', userId);
+    } catch (error) {
+      console.error('Error saving userId to AsyncStorage:', error);
+    }
+  };
 
   return (
     <View style={styles.container}>
