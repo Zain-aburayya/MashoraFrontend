@@ -13,6 +13,7 @@ import {isValidPassword} from '../validation/Password';
 import {user_login} from '../api/user_api';
 import isValidName from '../validation/Username';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import firestore from '@react-native-firebase/firestore';
 
 function Title() {
   return (
@@ -51,13 +52,35 @@ function LoginScreen() {
     if (!isValidName(username, 'username') || !isValidPassword(password)) {
       Alert.alert('خطأ في تسجيل الدخول', errorMessage, [{text: 'حسناً'}]);
     } else {
+      const usernameCopy = username;
       user_login({
         username: username,
         password: password,
       })
         .then(async result => {
           if (result.status === 200) {
-            const {token, roles, username, id, email} = result.data;
+            firestore()
+              .collection('users')
+              .where('username','==',usernameCopy)
+              .get()
+              .then(res => {
+                if (res.docs != []) {
+                  console.log('from login -> ' , JSON.stringify(res.docs[0].data()));
+                  goToNext(
+                    res.docs[0].data().userId,
+                  );
+                } else {
+                  Alert.alert('User not found');
+                }
+              })
+              .catch(
+                error => {
+                  console.log(error);
+                  Alert.alert('User not found');
+                }
+              )
+            console.log('username from login : ' , username);
+            const {token, roles, username, id, email,userId} = result.data;
             console.log(result.data);
             // Prepare the data to be saved
             const items = [
@@ -65,6 +88,7 @@ function LoginScreen() {
               ['role', roles[0]],
               ['username', username],
               ['email', email],
+              ['userId', userId],
               ['id', id.toString()], // Convert id to string as AsyncStorage stores only strings
             ];
 
@@ -75,6 +99,7 @@ function LoginScreen() {
               console.log(roles[0]);
               console.log(email);
               console.log(username);
+              console.log(userId);
               navigation.navigate('Main');
             } catch (error) {
               console.error('Error saving data to AsyncStorage:', error);
@@ -84,8 +109,12 @@ function LoginScreen() {
         .catch(err => {
           console.error(err);
         });
+        const goToNext = async (userId) => {
+    await AsyncStorage.setItem('USERID', userId);
+  };
     }
   }
+  
 
   return (
     <View style={styles.container}>

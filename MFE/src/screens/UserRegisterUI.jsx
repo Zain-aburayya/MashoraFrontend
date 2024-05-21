@@ -5,6 +5,8 @@ import isValidName from '../validation/Username';
 import isValidEmail from '../validation/Email';
 import isValidPhoneNumber from '../validation/PhoneNumber';
 import {useNavigation} from '@react-navigation/native';
+import firestore from '@react-native-firebase/firestore';
+import uuid from 'react-native-uuid';
 
 import {
   isValidPassword,
@@ -153,6 +155,24 @@ export default function UserRegister() {
       .catch(err => {
         console.error(err);
       });
+      const userId = uuid.v4();
+      firestore()
+        .collection('users')
+        .doc(userId)
+        .set({
+          username: username,
+          firstname: firstname,
+          lastname: lastname,
+          phoneNumber: phoneNumber,
+          email: email,
+          password: password,
+          userId: userId,
+        })
+        .catch(error => {
+          console.log(error);
+        });
+        
+        
   };
 
   return (
