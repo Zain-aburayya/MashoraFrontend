@@ -1,10 +1,10 @@
+/* eslint-disable react-hooks/exhaustive-deps */
+/* eslint-disable react-native/no-inline-styles */
 import {View, Text, StyleSheet} from 'react-native';
 import React, {useCallback, useEffect, useState} from 'react';
 import {GiftedChat, Bubble} from 'react-native-gifted-chat';
 import {useRoute} from '@react-navigation/native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import firestore from '@react-native-firebase/firestore';
-import uuid from 'react-native-uuid';
 
 const Chat = () => {
   const [messageList, setMessageList] = useState([]);
