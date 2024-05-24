@@ -10,11 +10,11 @@ import AboutUs from './src/screens/AboutusUI';
 import Wallet from './src/screens/walletUI';
 import {NavigationContainer} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
-import ChatListLawyer from './src/screens/ChatList';
+import ChatList from './src/screens/ChatList';
 import Chat from './src/screens/Chat';
 import Splash from './src/screens/Splash';
 import PostMain from './src/screens/PostMain';
-import ChatList from './src/screens/ChatListLawyer';
+import ChatListLawyer from './src/screens/ChatListLawyer';
 import ChatBot from './src/screens/ChatBot';
 import Main from './src/screens/Main';
 import PostUI from './src/screens/PostUI';
@@ -43,26 +43,14 @@ function App() {
           component={LoginScreen}
           options={{headerBackVisible: false}}
         />
-        <Stack.Screen
-          name="ChatListLawyer"
-          component={ChatListLawyer}
-          options={{headerTitle: 'جميع المحامين',headerBackVisible: false}}
-        />
-        <Stack.Screen
-          name="Chat"
-          component={Chat}
-          options={{headerBackVisible: false}}
-        />
+        <Stack.Screen name="ChatListLawyer" component={ChatListLawyer} />
+        <Stack.Screen name="Chat" component={Chat} />
         <Stack.Screen
           name="PostMain"
           component={PostMain}
           options={{headerBackVisible: false}}
         />
-        <Stack.Screen
-          name="ChatList"
-          component={ChatList}
-          options={{headerBackVisible: false}}
-        />
+        <Stack.Screen name="ChatList" component={ChatList} />
         <Stack.Screen
           name="ChatBot"
           component={ChatBot}
