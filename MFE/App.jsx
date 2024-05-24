@@ -10,11 +10,11 @@ import AboutUs from './src/screens/AboutusUI';
 import Wallet from './src/screens/walletUI';
 import {NavigationContainer} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
-import ChatListLawyer from './src/screens/ChatListLawyer';
+import ChatListLawyer from './src/screens/ChatList';
 import Chat from './src/screens/Chat';
 import Splash from './src/screens/Splash';
 import PostMain from './src/screens/PostMain';
-import ChatList from './src/screens/ChatList';
+import ChatList from './src/screens/ChatListLawyer';
 import ChatBot from './src/screens/ChatBot';
 import Main from './src/screens/Main';
 import PostUI from './src/screens/PostUI';
@@ -46,7 +46,7 @@ function App() {
         <Stack.Screen
           name="ChatListLawyer"
           component={ChatListLawyer}
-          options={{headerBackVisible: false}}
+          options={{headerTitle: 'جميع المحامين',headerBackVisible: false}}
         />
         <Stack.Screen
           name="Chat"
