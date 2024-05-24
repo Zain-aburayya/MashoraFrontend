@@ -1,7 +1,19 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import React, {useEffect, useState} from 'react';
-import {Image, StyleSheet, Text, TextInput, View} from 'react-native';
+import {
+  Image,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 import Checkbox from '../components/Checkbox';
+import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
+
+// Assume you have a navigation library like React Navigation
+import {useNavigation} from '@react-navigation/native';
+import {user_password_reset} from '../api/user_api';
 
 function Title() {
   return (
@@ -19,8 +31,12 @@ function Profile() {
     phoneNumber: '',
     email: '',
     role: '',
-    token: '',
   });
+
+  const [showMenu, setShowMenu] = useState(false); // State for menu visibility
+  const menuOptions = [{text: 'تعديل كلمة المرور', value: 'editPassword'}];
+
+  const navigation = useNavigation(); // Get navigation reference
 
   useEffect(() => {
     const fetchUserInfo = async () => {
@@ -32,14 +48,12 @@ function Profile() {
           'phoneNumber',
           'email',
           'role',
-          'token',
         ];
         const result = await AsyncStorage.multiGet(keys);
         const userInfoObject = result.reduce((acc, [key, value]) => {
           acc[key] = value;
           return acc;
         }, {});
-        //console.log(userInfoObject);
         setUserInfo(userInfoObject);
       } catch (error) {
         console.error('Error fetching user info from AsyncStorage:', error);
@@ -48,6 +62,7 @@ function Profile() {
 
     fetchUserInfo();
   }, []);
+
   const cusStyle = {
     borderRadius: 50,
     borderWidth: 2,
@@ -58,65 +73,67 @@ function Profile() {
     marginRight: 5,
   };
 
-  return (
-    <View style={styles.container}>
-      <Title />
-      <Image source={require('./Images/profile.png')} style={styles.image} />
-      <Text style={styles.input}>{userInfo.username}</Text>
-      <Text style={styles.input}>{userInfo.email}</Text>
-      {userInfo.role === 'ROLE_LAWYER' && (
-        <View style={styles.containerCheckbox}>
-          <Checkbox
-            style={cusStyle}
-            text="القانون المدني   "
-            isChecked={true}
-            flag={true}
-          />
-          <Checkbox
-            style={cusStyle}
-            text="الدولية الخاصة   "
-            isChecked={true}
-            flag={true}
-          />
-          <Checkbox
-            style={cusStyle}
-            text="القانون الجنائي  "
-            isChecked={false}
-            flag={true}
-          />
-          <Checkbox
-            style={cusStyle}
-            text="القانون التجاري  "
-            isChecked={false}
-            flag={true}
-          />
-          <Checkbox
-            style={cusStyle}
-            text="القانون الإجرائية"
-            isChecked={false}
-            flag={true}
-          />
-          <Checkbox
-            style={cusStyle}
-            text="القانون الدستوري "
-            isChecked={false}
-            flag={true}
-          />
-          <Checkbox
-            style={cusStyle}
-            text="القانون الدولي   "
-            isChecked={true}
-            flag={true}
-          />
-          <Checkbox
-            style={cusStyle}
-            text="القانون الإداري والمالي"
-            isChecked={false}
-            flag={true}
-          />
-        </View>
-      )}
+  const handleMenuPress = () => {
+    setShowMenu(!showMenu);
+  };
+
+  const handleEditOptionPress = option => {
+    setShowMenu(false);
+    if (option === 'editPassword') {
+      user_password_reset({email: userInfo.email})
+        .then(result => {
+          console.log(userInfo.email);
+        })
+        .catch(err => {
+          console.log(err);
+        });
+    }
+  };
+
+  const renderMenu = () => (
+    <View style={styles.menuContainer}>
+      {menuOptions.map(option => (
+        <TouchableOpacity
+          key={option.value}
+          onPress={() => handleEditOptionPress(option.value)}
+          style={styles.menuItem}>
+          <Text style={styles.menuText}>{option.text}</Text>
+        </TouchableOpacity>
+      ))}
     </View>
+  );
+
+  return (
+    <>
+      <FontAwesome5.Button
+        name={'user-edit'}
+        color={'#8A6F42'}
+        size={30}
+        backgroundColor={'#f2efeb'}
+        onPress={handleMenuPress}
+        style={{
+          flexDirection: 'row-reverse',
+        }}
+      />
+      <View style={styles.container}>
+        <Title />
+        <Image source={require('./Images/profile.png')} style={styles.image} />
+        <Text style={styles.input}>{userInfo.username}</Text>
+        <Text style={styles.input}>{userInfo.email}</Text>
+        {userInfo.role === 'ROLE_LAWYER' && (
+          <View style={styles.containerCheckbox}>
+            <Checkbox
+              style={cusStyle}
+              text="القانون المدني   "
+              isChecked={true}
+              flag={true}
+            />
+            {/* ... other Checkbox components */}
+          </View>
+        )}
+      </View>
+      {showMenu && renderMenu()}
+    </>
   );
 }
 
@@ -200,6 +217,29 @@ const styles = StyleSheet.create({
   image: {
     width: 150,
     height: 150,
+  },
+  menuContainer: {
+    position: 'absolute', // Position menu appropriately (consider overflow)
+    // top: /* adjust based on button placement */,
+    // right: /* adjust based on button placement */,
+    right: 0,
+    top: 50,
+    padding: 10,
+    backgroundColor: '#fff',
+    borderRadius: 5,
+    shadowColor: '#ccc',
+    shadowOffset: {width: 0, height: 3},
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
+    elevation: 3, // Optional for shadows on Android
+  },
+  menuItem: {
+    padding: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: '#ddd',
+  },
+  menuText: {
+    fontSize: 16,
   },
 });
 

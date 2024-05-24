@@ -171,9 +171,6 @@ export default function UserRegister() {
       .catch(err => {
         console.error(err);
       });
-      
-        
-        
   };
 
   return (

@@ -91,6 +91,7 @@ const PostMain = () => {
             return uniquePosts;
           });
           setTotalPages(result.data.data.totalPages);
+          console.log(totalPages);
         }
       })
       .catch(err => {
@@ -138,19 +139,33 @@ const PostMain = () => {
         setRefreshing(false);
       });
   }, [page]);
-
+  console.log('total pages - ', totalPages);
   return (
     <SafeAreaView style={styles.container}>
-      <View>
-        <FlatList
-          data={posts}
-          renderItem={({item}) => <Item data={item} />}
-          keyExtractor={item => item.id}
-          refreshControl={
-            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-          }
-        />
-      </View>
+      {totalPages > 0 ? (
+        <View>
+          <FlatList
+            data={posts}
+            renderItem={({item}) => <Item data={item} />}
+            keyExtractor={item => item.id}
+            refreshControl={
+              <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+            }
+          />
+        </View>
+      ) : (
+        <View>
+          <Text
+            style={{
+              textAlign: 'center',
+              fontSize: 20,
+              fontStyle: 'normal',
+              fontWeight: 'bold',
+            }}>
+            لا يوجد اي سؤال حالياً...
+          </Text>
+        </View>
+      )}
       {role === 'ROLE_CUSTOMER' && (
         <TouchableOpacity
           style={styles.addButton}

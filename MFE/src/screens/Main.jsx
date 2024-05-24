@@ -31,8 +31,9 @@ const LawyerMain = ({route}) => {
     if (route && route.params && route.params.tab !== undefined) {
       setSelectedTab(route.params.tab);
       handleTabSelect(2);
+      navigation.setParams({tab: undefined});
     }
-  }, [route]);
+  }, []);
 
   useEffect(() => {
     const backAction = () => {
