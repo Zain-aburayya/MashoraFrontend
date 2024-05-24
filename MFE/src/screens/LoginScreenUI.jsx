@@ -53,10 +53,10 @@ function LoginScreen() {
       Alert.alert('خطأ في تسجيل الدخول', errorMessage, [{text: 'حسناً'}]);
       return;
     }
-
+    console.log(username);
     try {
       const result = await user_login({username, password});
-
+      console.log(result.data.username);
       if (result.status === 200) {
         const userQuerySnapshot = await firestore()
           .collection('users')

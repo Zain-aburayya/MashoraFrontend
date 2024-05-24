@@ -12,7 +12,6 @@ import {NavigationContainer} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import ChatListLawyer from './src/screens/ChatListLawyer';
 import Chat from './src/screens/Chat';
-import ChatListUser from './src/screens/ChatListUser';
 import Splash from './src/screens/Splash';
 import PostMain from './src/screens/PostMain';
 import ChatList from './src/screens/ChatList';
@@ -27,7 +26,7 @@ const Stack = createNativeStackNavigator();
 function App() {
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName="Splash">
+      <Stack.Navigator initialRouteName="LoginScreen">
         <Stack.Screen
           name="UserRegister"
           component={UserRegister}
@@ -52,11 +51,6 @@ function App() {
         <Stack.Screen
           name="Chat"
           component={Chat}
-          options={{headerBackVisible: false}}
-        />
-        <Stack.Screen
-          name="ChatListUser"
-          component={ChatListUser}
           options={{headerBackVisible: false}}
         />
         <Stack.Screen
