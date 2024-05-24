@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import {
   View,
   Text,
@@ -11,7 +12,6 @@ import React, {useEffect, useState} from 'react';
 import ChatBot from './ChatBot';
 import ChatList from './ChatList';
 import PostPage from './PostMain';
-import ChatListLawyer from './ChatListLawyer';
 import Foundation from 'react-native-vector-icons/Foundation';
 import {useNavigation} from '@react-navigation/native';
 
@@ -75,7 +75,7 @@ const LawyerMain = ({route}) => {
       {selectedTab === 1 ? (
         <ChatBot />
       ) : selectedTab === 0 ? (
-        <ChatList/>
+        <ChatList />
       ) : (
         <PostPage key={reloadKey} />
       )}

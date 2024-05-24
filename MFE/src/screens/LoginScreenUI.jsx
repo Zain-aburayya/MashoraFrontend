@@ -8,7 +8,7 @@ import {
   View,
 } from 'react-native';
 import React, {useState} from 'react';
-import {useLinkBuilder, useNavigation} from '@react-navigation/native';
+import {useNavigation} from '@react-navigation/native';
 import {isValidPassword} from '../validation/Password';
 import {user_login} from '../api/user_api';
 import isValidName from '../validation/Username';

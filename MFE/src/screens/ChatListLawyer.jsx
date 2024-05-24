@@ -7,16 +7,11 @@ import {
   StatusBar,
   Image,
   TouchableOpacity,
-  Alert,
-  BackHandler,
 } from 'react-native';
 import React, {useEffect, useState} from 'react';
-import ChatBot from './ChatBot';
-import ChatList from './ChatList';
-import PostPage from './PostMain';
 import firestore from '@react-native-firebase/firestore';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {useIsFocused, useNavigation} from '@react-navigation/native';
+import {useNavigation} from '@react-navigation/native';
 
 let id = '';
 
