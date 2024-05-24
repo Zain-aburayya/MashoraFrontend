@@ -129,8 +129,8 @@ export default function UserRegister() {
   const handleSignUp = () => {
     user_signup({
       username: username,
-      firstname: firstname,
-      lastname: lastname,
+      firstName: firstname,
+      lastName: lastname,
       phoneNumber: phoneNumber,
       email: email,
       password: password,
@@ -155,24 +155,22 @@ export default function UserRegister() {
       .catch(err => {
         console.error(err);
       });
-      const userId = uuid.v4();
-      firestore()
-        .collection('users')
-        .doc(userId)
-        .set({
-          username: username,
-          firstname: firstname,
-          lastname: lastname,
-          phoneNumber: phoneNumber,
-          email: email,
-          password: password,
-          userId: userId,
-        })
-        .catch(error => {
-          console.log(error);
-        });
-        
-        
+    const userId = uuid.v4();
+    firestore()
+      .collection('users')
+      .doc(userId)
+      .set({
+        username: username,
+        firstname: firstname,
+        lastname: lastname,
+        phoneNumber: phoneNumber,
+        email: email,
+        password: password,
+        userId: userId,
+      })
+      .catch(error => {
+        console.log(error);
+      });
   };
 
   return (

@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
+import {OtpInput} from 'react-native-otp-entry';
 
 function Title() {
   return (
@@ -28,14 +29,15 @@ function ButtonReuse({text, onPress}) {
 
 function ResetPassword() {
   const [resetPass, setResetPass] = useState({
-    oldPassword: '',
+    otp: '',
     newPassword: '',
     confPassword: '',
   });
 
-  const {oldPassword, newPassword, confPassword} = resetPass;
+  const {otp, newPassword, confPassword} = resetPass;
   const [showPassword, setShowPassword] = useState(false);
   function handleOnChange(value, feildName) {
+    console.log(feildName, ' == ', value);
     setResetPass({...resetPass, [feildName]: value});
   }
 
@@ -46,13 +48,17 @@ function ResetPassword() {
   return (
     <View style={styles.container}>
       <Title />
-      <TextInput
-        style={[styles.input, {textAlign: 'right'}]}
-        placeholderTextColor={'black'}
-        value={oldPassword}
-        secureTextEntry={!showPassword}
-        placeholder="كلمة المرور القديمة"
-        onChangeText={e => handleOnChange(e, 'oldPassword')}
+      <OtpInput
+        numberOfDigits={6}
+        focusColor="#8A6F42"
+        focusStickBlinkingDuration={500}
+        onFilled={e => handleOnChange(e, 'otp')}
+        textInputProps={{
+          accessibilityLabel: 'One-Time Password',
+        }}
+        theme={{
+          containerStyle: {marginBottom: 30, width: 350},
+        }}
       />
       <TextInput
         style={[styles.input, {textAlign: 'right'}]}
