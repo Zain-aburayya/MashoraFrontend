@@ -12,6 +12,7 @@ import React, {useEffect, useState} from 'react';
 import firestore from '@react-native-firebase/firestore';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {useIsFocused, useNavigation} from '@react-navigation/native';
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 
 let id='';
 
@@ -22,26 +23,33 @@ const ChatList = () => {
         getUsers();
   },[]);
   const getUsers=async()=>{
-    id=await AsyncStorage.getItem('USERID');
-    let tempData=[]
-    const username=await AsyncStorage.getItem('username');
-    console.log(username);
-    firestore()
-      .collection('users')
-      .where('username','!=',username)
-      .get()
-      .then(res=>{
-        if(res.docs.length>0){
-          res.docs.map(item=>{
-              tempData.push(item.data());
-              console.log("////////////>>>>>>>>>");
-              console.log(username);
-              console.log(id);
-              console.log(item.data());
-          });
-      }
+    try {
+      id = await AsyncStorage.getItem('USERID');
+      const email = await AsyncStorage.getItem('username');
+      const tempData = [];
+      console.log(email);
+      const usersSnapshot = await firestore()
+          .collection('users')
+          .where('role', '==', 'ROLE_LAWYER')
+          .get();
+
+      await Promise.all(usersSnapshot.docs.map(async (userDoc) => {
+          const toId = userDoc.data().userId;
+          const messagesSnapshot = await firestore()
+              .collection('chats')
+              .doc(id + toId)
+              .collection('messages')
+              .get();
+
+          if (messagesSnapshot.docs.length > 0) {
+              tempData.push(userDoc.data());
+          }
+      }));
+
       setUsers(tempData);
-      });
+      } catch (error) {
+          console.error('Error fetching users:', error);
+      }
   };
   return (
     <View style={styles.container}>
@@ -62,7 +70,13 @@ const ChatList = () => {
               );
           }}
       />
+      <TouchableOpacity
+          style={styles.addButton}
+          onPress={() => navigation.navigate('ChatListLawyer')}>
+          <MaterialIcons name="post-add" size={30} color="#FFFFFF" />
+        </TouchableOpacity>
     </View>
+    
   );
 };
 export default ChatList;
@@ -104,6 +118,16 @@ const styles = StyleSheet.create({
     color: 'black', 
     marginLeft: 20, 
     fontSize: 20,
+  },
+  addButton: {
+    position: 'absolute',
+    bottom: -30,
+    right: 20,
+    backgroundColor: '#8A6F42',
+    padding: 15,
+    borderRadius: 30,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
 });
 
