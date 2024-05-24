@@ -18,57 +18,58 @@ import firestore from '@react-native-firebase/firestore';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {useIsFocused, useNavigation} from '@react-navigation/native';
 
-
-let id='';
+let id = '';
 
 const ChatListLawyer = () => {
-  const[users,setUsers]=useState([]);
-  const navigation= useNavigation();
-  useEffect(()=>{
-        getUsers();
-  },[]);
-  const getUsers=async()=>{
-    id=await AsyncStorage.getItem('USERID');
-    let tempData=[]
-    const username=await AsyncStorage.getItem('username');
+  const [users, setUsers] = useState([]);
+  const navigation = useNavigation();
+  useEffect(() => {
+    getUsers();
+  }, []);
+  const getUsers = async () => {
+    id = await AsyncStorage.getItem('USERID');
+    let tempData = [];
+    const username = await AsyncStorage.getItem('username');
     console.log(username);
     firestore()
       .collection('users')
-      .where('role','==','ROLE_LAWYER')
+      .where('role', '==', 'ROLE_LAWYER')
       .get()
-      .then(res=>{
-        if(res.docs.length>0){
-          res.docs.map(item=>{
-              tempData.push(item.data());
-              console.log("////////////>>>>>>>>>");
-              console.log(username);
-              console.log(id);
-              console.log(item.data());
+      .then(res => {
+        if (res.docs.length > 0) {
+          res.docs.map(item => {
+            tempData.push(item.data());
+            console.log('////////////>>>>>>>>>');
+            console.log(username);
+            console.log(id);
+            console.log(item.data());
           });
-      }
-      setUsers(tempData);
+        }
+        setUsers(tempData);
       });
   };
   return (
     <View style={styles.container}>
       {/* <View style={styles.topTab}> */}
-      <FlatList 
-          data={users} 
-          renderItem={({item,index})=>{
-              return(
-                  <TouchableOpacity style={styles.userItem} onPress={()=>{
-                    navigation.navigate('Chat',{data:item , id:id});
-                  }}>
-                      <Image 
-                          source={require('./Images/profile.png')} 
-                          style={styles.userIcon}
-                      />
-                      <Text style={styles.name}>{item.username}</Text>
-                  </TouchableOpacity>
-              );
-          }}
+      <FlatList
+        data={users}
+        renderItem={({item, index}) => {
+          return (
+            <TouchableOpacity
+              style={styles.userItem}
+              onPress={() => {
+                navigation.navigate('Chat', {data: item, id: id});
+              }}>
+              <Image
+                source={require('./Images/profile.png')}
+                style={styles.userIcon}
+              />
+              <Text style={styles.name}>{item.username}</Text>
+            </TouchableOpacity>
+          );
+        }}
       />
-      </View>
+    </View>
     // </View>
   );
 };
@@ -110,9 +111,8 @@ const styles = StyleSheet.create({
     height: 40,
   },
   name: {
-    color: 'black', 
-    marginLeft: 20, 
+    color: 'black',
+    marginLeft: 20,
     fontSize: 20,
   },
 });
-
