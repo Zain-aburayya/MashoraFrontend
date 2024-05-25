@@ -22,6 +22,9 @@ import PostQuestion from './src/screens/PostQuestion';
 import Profile from './src/screens/Profile';
 import ClickedProfile from './src/screens/ClickedProfile';
 import ForgetPassword from './src/screens/ForgetPassword';
+import Section from './src/screens/Section';
+import SectionList from './src/screens/SectionList';
+import SectionLawyer from './src/screens/SectionLawyer';
 const Stack = createNativeStackNavigator();
 
 function App() {
@@ -100,7 +103,10 @@ function App() {
         <Stack.Screen name="PostUI" component={PostUI} />
         <Stack.Screen name="PostQuestion" component={PostQuestion} />
         <Stack.Screen name="Profile" component={Profile} />
+        <Stack.Screen name="Section" component={Section} />
+        <Stack.Screen name="SectionList" component={SectionList} />
         <Stack.Screen name="ClickedProfile" component={ClickedProfile} />
+        <Stack.Screen name="SectionLawyer" component={SectionLawyer} />
       </Stack.Navigator>
     </NavigationContainer>
   );
