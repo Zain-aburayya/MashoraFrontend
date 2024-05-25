@@ -38,7 +38,11 @@ function App() {
           component={LawyerRegister}
           options={{headerBackVisible: false}}
         />
-        <Stack.Screen name="LawyerInfo" component={LawyerInfo} />
+        <Stack.Screen
+          name="LawyerInfo"
+          component={LawyerInfo}
+          options={{headerBackVisible: false}}
+        />
         <Stack.Screen
           name="LoginScreen"
           component={LoginScreen}

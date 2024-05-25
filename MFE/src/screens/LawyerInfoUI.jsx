@@ -1,90 +1,18 @@
-// import axios from 'axios';
-// import React, {useState} from 'react';
-// import {View, Button, TextInput, Alert} from 'react-native';
-// import DocumentPicker from 'react-native-document-picker';
-
-// const LawyerInfo = () => {
-//   const [id, setId] = useState('');
-//   const [file, setFile] = useState(null);
-
-//   const pickDocument = async () => {
-//     try {
-//       const result = await DocumentPicker.pick({
-//         type: [DocumentPicker.types.pdf, DocumentPicker.types.docx],
-//         allowMultiSelection: false,
-//       });
-//       console.log(result);
-//       if (result.length > 0) {
-//         setFile(result[0]);
-//       }
-//     } catch (err) {
-//       if (DocumentPicker.isCancel(err)) {
-//         Alert.alert('Cancelled', 'Document selection was cancelled.');
-//       } else {
-//         Alert.alert('Error', 'Unknown error: ' + JSON.stringify(err));
-//       }
-//     }
-//   };
-
-//   const submitForm = async () => {
-//     if (!id.trim()) {
-//       Alert.alert('Error', 'Please enter a valid lawyer ID.');
-//       return;
-//     }
-
-//     if (!file) {
-//       Alert.alert('Error', 'Please upload a PDF file.');
-//       return;
-//     }
-
-//     const formData = new FormData();
-//     formData.append('file', {
-//       uri: file.uri,
-//       name: file.name,
-//       type: file.type,
-//     });
-//     formData.append('id', id);
-
-//     try {
-//       const response = await fetch(
-//         'http://10.0.2.2:8080/api/auth/lawyerDetails/' + id,
-//         {
-//           method: 'post',
-//           headers: {
-//             'Content-Type': 'multipart/form-data',
-//           },
-//           body: formData,
-//         },
-//       );
-//       console.log(response);
-//     } catch (error) {
-//       console.log(error);
-//       Alert.alert('Error', 'Error sending request: ' + error.message);
-//     }
-//   };
-
-//   return (
-//     <View>
-//       <TextInput
-//         placeholder="ID"
-//         value={id}
-//         onChangeText={setId}
-//         keyboardType="numeric"
-//       />
-//       <Button title="Pick PDF" onPress={pickDocument} />
-//       <Button title="Submit" onPress={submitForm} />
-//     </View>
-//   );
-// };
-
-// export default LawyerInfo;
-
 /* eslint-disable react-native/no-inline-styles */
-import React, {useState} from 'react';
-import {Image, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import React, {useEffect, useState} from 'react';
+import {
+  Alert,
+  Image,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 import Checkbox from '../components/Checkbox';
 import DocumentPicker from 'react-native-document-picker';
-import {pick} from 'react-native-document-picker';
+import {lawyer_certificate} from '../api/lawyer_api';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import {useNavigation} from '@react-navigation/native';
 
 function Title({text}) {
   return (
@@ -103,9 +31,25 @@ function ButtonReuse({text, onPress}) {
 }
 
 function LawyerInfo({route}) {
-  const [combinedLawyerData, setCombinedLawyerData] = useState(
-    route.params.lawyerInfo,
-  );
+  const [id, setId] = useState(null);
+  const [civilLaw, setCivilLaw] = useState(false);
+  const [commercialLaw, setCommercialLaw] = useState(false);
+  const [internationalLaw, setInternationalLaw] = useState(false);
+  const [criminalLaw, setCriminalLaw] = useState(false);
+  const [administrativeAndFinancialLaw, setAdministrativeAndFinancialLaw] =
+    useState(false);
+  const [constitutionalLaw, setConstitutionalLaw] = useState(false);
+  const [privateInternationalLaw, setPrivateInternationalLaw] = useState(false);
+  const [proceduralLaw, setProceduralLaw] = useState(false);
+
+  const [file, setFile] = useState(null);
+
+  const navigation = useNavigation();
+  useEffect(() => {
+    AsyncStorage.getItem('id').then(res => {
+      setId(res);
+    });
+  }, []);
 
   const cusStyle = {
     borderRadius: 50,
@@ -117,65 +61,143 @@ function LawyerInfo({route}) {
     marginRight: 5,
   };
 
-  async function uploadDocumentHandler() {
+  const pickDocument = async () => {
     try {
-      console.log('here');
-      const doc = await pick({
+      const result = await DocumentPicker.pick({
         type: [DocumentPicker.types.pdf, DocumentPicker.types.docx],
         allowMultiSelection: false,
-        copyTo: 'cachesDirectory',
       });
-      // TODO delete this log when we finish handling the API request
-      console.log(doc[0].fileCopyUri);
+      console.log(result);
+      if (result.length > 0) {
+        setFile(result[0]);
+      }
     } catch (err) {
-      console.log(err);
+      if (DocumentPicker.isCancel(err)) {
+        Alert.alert('الغاء', 'تم الغاء اختيار الملف!');
+      } else {
+        Alert.alert('Error', 'Unknown error: ' + JSON.stringify(err));
+      }
     }
-  }
+  };
 
-  function handleOnChange(value, feildName) {
-    setCombinedLawyerData({...combinedLawyerData, [feildName]: value});
+  const submitForm = async () => {
+    if (!file) {
+      Alert.alert('هناك خطأ', 'يرجى تحميل ملف مزاولة المهنة الخاص بك');
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append('file', {
+      uri: file.uri,
+      name: file.name,
+      type: file.type,
+    });
+    formData.append('id', id);
+    formData.append('civilLaw', Boolean(civilLaw));
+    formData.append('commercialLaw', commercialLaw);
+    formData.append('internationalLaw', internationalLaw);
+    formData.append('criminalLaw', criminalLaw);
+    formData.append(
+      'administrativeAndFinancialLaw',
+      administrativeAndFinancialLaw,
+    );
+    formData.append('constitutionalLaw', constitutionalLaw);
+    formData.append('privateInternationalLaw', privateInternationalLaw);
+    formData.append('proceduralLaw', proceduralLaw);
+    lawyer_certificate({
+      formData: formData,
+    });
+    navigation.navigate('Main');
+  };
+
+  function handleLoguot() {
+    Alert.alert('تسجيل الخروج', 'هل أنت متأكد من تسجيل خروجك ؟', [
+      {
+        text: 'لا',
+        onPress: () => null,
+      },
+      {
+        text: 'نعم',
+        onPress: () => {
+          try {
+            let keys = ['token', 'role', 'username', 'email', 'id'];
+            AsyncStorage.multiRemove(keys);
+            console.log('data removed :)');
+            navigation.navigate('LoginScreen');
+          } catch (err) {
+            console.log(err);
+          }
+        },
+      },
+    ]);
   }
 
   return (
     <>
       <View style={styles.container}>
+        <Title text="اكمل خطوات التسجيل لتصبح محامي موثوق..." />
         <Title text="إختر القوانين الذي تمتلك خبرة بها …" />
         <View style={styles.containerCheckbox}>
           <Checkbox
             style={cusStyle}
             text="القانون المدني   "
-            onPress={isChecked => handleOnChange(isChecked, 'civilLaw')}
+            onPress={isChecked => setCivilLaw(true)}
           />
-          <Checkbox style={cusStyle} text="الدولية الخاصة   " />
-          <Checkbox style={cusStyle} text="القانون الجنائي  " />
-          <Checkbox style={cusStyle} text="القانون التجاري  " />
-          <Checkbox style={cusStyle} text="القانون الإجرائية" />
-          <Checkbox style={cusStyle} text="القانون الدستوري " />
+          <Checkbox
+            style={cusStyle}
+            text="الدولية الخاصة   "
+            onPress={isChecked => setPrivateInternationalLaw(isChecked)}
+          />
+          <Checkbox
+            style={cusStyle}
+            text="القانون الجنائي  "
+            onPress={isChecked => setCriminalLaw(isChecked)}
+          />
+          <Checkbox
+            style={cusStyle}
+            text="القانون التجاري  "
+            onPress={isChecked => setCommercialLaw(isChecked)}
+          />
+          <Checkbox
+            style={cusStyle}
+            text="القانون الإجرائية"
+            onPress={isChecked => setProceduralLaw(isChecked)}
+          />
+          <Checkbox
+            style={cusStyle}
+            text="القانون الدستوري "
+            onPress={isChecked => setConstitutionalLaw(isChecked)}
+          />
           <Checkbox
             style={cusStyle}
             text="القانون الدولي   "
-            onPress={isChecked => handleOnChange(isChecked, 'internationalLaw')}
+            onPress={isChecked => setInternationalLaw(isChecked)}
           />
-          <Checkbox style={cusStyle} text="القانون الإداري والمالي" />
+          <Checkbox
+            style={cusStyle}
+            text="القانون الإداري والمالي"
+            onPress={isChecked => setAdministrativeAndFinancialLaw(isChecked)}
+          />
         </View>
         <Title text="اضف شهادة مزاولة المهنة الخاصة بك …" />
         <TouchableOpacity
-          style={{marginTop: -10, marginBottom: 30}}
-          onPress={uploadDocumentHandler}>
+          style={{marginTop: -10, marginBottom: 20}}
+          onPress={() => pickDocument()}>
           <Image
             source={require('./Images/uploadFile.jpeg')}
             style={styles.image}
           />
         </TouchableOpacity>
-        {/* <Checkbox
-          text="من خلال إنشاء حساب، فإنك توافق على شروط الاستخدام وسياسة
-          الخصوصية الخاصة بنا "
-          onPress={isChecked => setCheckBoxState(isChecked)}
-        /> */}
+        <ButtonReuse
+          text="تسجيل خروج"
+          onPress={() => {
+            handleLoguot();
+          }}
+        />
         <ButtonReuse
           text="تسجيل"
           onPress={() => {
-            // TODO Add the policies & file checker and call an API
+            submitForm();
           }}
         />
       </View>
@@ -189,7 +211,7 @@ const styles = StyleSheet.create({
   },
   titleFont: {
     fontFamily: 'OpenSans-Bold',
-    fontSize: 23,
+    fontSize: 21,
     fontWeight: 'bold',
     color: '#8A6F42',
   },
@@ -252,7 +274,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 150,
     paddingVertical: 15,
     borderRadius: 12,
-    marginTop: 20,
+    marginTop: 10,
     borderColor: '#f2efeb',
     borderWidth: 2,
   },

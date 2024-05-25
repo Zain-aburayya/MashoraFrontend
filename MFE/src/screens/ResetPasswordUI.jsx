@@ -1,5 +1,5 @@
+/* eslint-disable no-unused-vars */
 /* eslint-disable react-native/no-inline-styles */
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import React, {useEffect, useState} from 'react';
 import {
   Alert,
@@ -24,6 +24,7 @@ function Title() {
 
 function ResetPassword({route}) {
   console.log(route.params.email);
+  console.log(route.params.from);
   const [resetPass, setResetPass] = useState({
     email: '',
     OTP: '',
@@ -61,8 +62,12 @@ function ResetPassword({route}) {
         OTP: resetPass.OTP,
       })
         .then(result => {
-          console.log(result);
-          navigation.navigate('Main');
+          console.log(route.params.from);
+          if (route.params.from === 'profile') {
+            navigation.navigate('Main');
+          } else {
+            navigation.navigate('LoginScreen');
+          }
         })
         .catch(err => {
           console.log(err);
@@ -125,7 +130,10 @@ function ResetPassword({route}) {
       </TouchableOpacity>
       <TouchableOpacity
         style={[styles.button2, {marginBottom: 100, marginTop: -100}]}
-        onPress={() => handleChangePassword()}>
+        onPress={() => {
+          console.log(route.params.from);
+          handleChangePassword(route.params.from);
+        }}>
         <Text style={styles.buttonText2}>تغيير كلمة المرور</Text>
       </TouchableOpacity>
     </View>

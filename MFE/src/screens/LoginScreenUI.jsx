@@ -14,6 +14,7 @@ import {user_login} from '../api/user_api';
 import isValidName from '../validation/Username';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import firestore from '@react-native-firebase/firestore';
+import {check_lawyer_certificate} from '../api/lawyer_api';
 
 function Title() {
   return (
@@ -55,8 +56,8 @@ function LoginScreen() {
     }
     console.log(username);
     try {
-      const result = await user_login({username, password});
-      console.log(result.data.username);
+      //console.log('---', username);
+      const result = await user_login({username: username, password: password});
       if (result.status === 200) {
         const userQuerySnapshot = await firestore()
           .collection('users')
@@ -74,6 +75,7 @@ function LoginScreen() {
           return;
         }
 
+        // eslint-disable-next-line no-shadow
         const {token, roles, username, id, email} = result.data;
         console.log(result.data);
 
@@ -92,7 +94,27 @@ function LoginScreen() {
         console.log(roles[0]);
         console.log(email);
         console.log(username);
-        navigation.navigate('Main');
+        if (roles[0] === 'ROLE_LAWYER') {
+          check_lawyer_certificate()
+            .then(res => {
+              if (res === `No certificate ralated to ${username} exist`) {
+                navigation.navigate('LawyerInfo');
+              } else {
+                navigation.navigate('Main');
+              }
+            })
+            .catch(error => {
+              console.log(error);
+            });
+        } else {
+          navigation.navigate('Main');
+        }
+      } else {
+        Alert.alert(
+          'خطأ في تسجيل الدخول',
+          'تأكد من البريد الاكتروني وكلمة المرور',
+          [{text: 'حسناً'}],
+        );
       }
     } catch (error) {
       console.error('Error during login:', error);
