@@ -6,10 +6,12 @@ import isValidName from '../validation/Username';
 import isValidEmail from '../validation/Email';
 import isValidPhoneNumber from '../validation/PhoneNumber';
 import {useNavigation} from '@react-navigation/native';
+import uuid from 'react-native-uuid';
+import firestore from '@react-native-firebase/firestore';
 import {
   isValidPassword,
   confirmPasswordValidation,
-} from './validation/Password';
+} from '../validation/Password';
 
 import {
   Alert,
@@ -19,6 +21,7 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
+import {user_signup} from '../api/user_api';
 
 function Title() {
   return (
@@ -48,26 +51,26 @@ function ButtonReuse({text, onPress}) {
 
 export default function LawyerRegister() {
   const navigation = useNavigation();
-
+  const [checkBoxState, setCheckBoxState] = useState(false);
   const [lawyerInfo, setUserInfo] = useState({
+    username: '',
     firstname: '',
     lastname: '',
     phoneNumber: '',
     email: '',
     password: '',
     confirmPassword: '',
-    ppn: '',
   });
   const [showPassword, setShowPassword] = useState(false);
 
   const {
+    username,
     firstname,
     lastname,
     phoneNumber,
     email,
     password,
     confirmPassword,
-    ppn,
   } = lawyerInfo;
 
   const errorMessages = {
@@ -83,34 +86,88 @@ export default function LawyerRegister() {
 
   function handlePress() {
     // TODO Uncomment these lines
-    // if (!isValidName(lastname) || !isValidName(firstname)) {
-    //   Alert.alert('خطأ في الإسم الاول او الأخير', errorMessages.name, [
-    //     {text: 'حسناً'},
-    //   ]);
-    // } /*else if(isUsedEmail(email)){
-    // }*/ else if (!isValidEmail(email)) {
-    //   Alert.alert('خطأ في البريد الإلكتروني', errorMessages.email, [
-    //     {text: 'حسناً'},
-    //   ]);
-    // } else if (!isValidPhoneNumber(phoneNumber)) {
-    //   Alert.alert('خطأ في رقم الهاتف', errorMessages.phone, [{text: 'حسناً'}]);
-    // } else if (!isValidPassword(password)) {
-    //   Alert.alert('خطأ في كلمة السر', errorMessages.password, [
-    //     {text: 'حسناً'},
-    //   ]);
-    // } else if (!confirmPasswordValidation(password, confirmPassword)) {
-    //   Alert.alert('خطأ في تأكيد كلمة السر', errorMessages.confirmPassword, [
-    //     {text: 'حسناً'},
-    //   ]);
-    // } else if (!checkBoxState) {
-    //   Alert.alert('لم توافق على الشروط', errorMessages.checkBox, [
-    //     {text: 'حسناً'},
-    //   ]);
-    // } else {
-    //   console.log(lawyerInfo);
-    // }
-    navigation.navigate('LawyerInfo', {lawyerInfo: lawyerInfo});
+    console.log(username);
+    if (!isValidName(username, 'username')) {
+      Alert.alert('خطأ في اسم المستخدم', errorMessages.username, [
+        {text: 'حسناً'},
+      ]);
+    } else if (
+      !isValidName(lastname, 'name') ||
+      !isValidName(firstname, 'name')
+    ) {
+      Alert.alert('خطأ في الإسم الاول او الأخير', errorMessages.name, [
+        {text: 'حسناً'},
+      ]);
+    } else if (!isValidEmail(email)) {
+      Alert.alert('خطأ في البريد الإلكتروني', errorMessages.email, [
+        {text: 'حسناً'},
+      ]);
+    } else if (!isValidPhoneNumber(phoneNumber)) {
+      Alert.alert('خطأ في رقم الهاتف', errorMessages.phone, [{text: 'حسناً'}]);
+    } else if (!isValidPassword(password)) {
+      Alert.alert('خطأ في كلمة السر', errorMessages.password, [
+        {text: 'حسناً'},
+      ]);
+    } else if (!confirmPasswordValidation(password, confirmPassword)) {
+      Alert.alert('خطأ في تأكيد كلمة السر', errorMessages.confirmPassword, [
+        {text: 'حسناً'},
+      ]);
+    } else if (!checkBoxState) {
+      Alert.alert('لم توافق على الشروط', errorMessages.checkBox, [
+        {text: 'حسناً'},
+      ]);
+    } else {
+      handleSignUp();
+    }
   }
+
+  const handleSignUp = () => {
+    user_signup({
+      username: username,
+      firstName: firstname,
+      lastName: lastname,
+      phoneNumber: phoneNumber,
+      email: email,
+      password: password,
+      role: ['lawyer'],
+    })
+      .then(result => {
+        if (result.status === 200) {
+          navigation.navigate('LoginScreen');
+        } else if (result.message === 'Error: Username is already taken!') {
+          Alert.alert(
+            'اسم المستخدم مُستخدم من قبل.',
+            'يرجى استخدام اسم مستخدم آخر.',
+            [{text: 'حسناً'}],
+          );
+        } else if (result.message === 'Error: Email is already in use!') {
+          Alert.alert(
+            'البريد الاكتروني مُستخدم من قبل.',
+            'يرجى استخدام اسم بريد الكتروني آخر.',
+            [{text: 'حسناً'}],
+          );
+        }
+      })
+      .catch(err => {
+        console.error(err);
+      });
+    const userId = uuid.v4();
+    firestore()
+      .collection('users')
+      .doc(userId)
+      .set({
+        username: username,
+        firstname: firstname,
+        lastname: lastname,
+        phoneNumber: phoneNumber,
+        email: email,
+        userId: userId,
+        role: 'ROLE_LAWYER',
+      })
+      .catch(error => {
+        console.log(error);
+      });
+  };
 
   function handleOnChange(value, feildName) {
     setUserInfo({...lawyerInfo, [feildName]: value});
@@ -121,7 +178,13 @@ export default function LawyerRegister() {
       <View style={styles.container}>
         <Title />
         <LoginButton navigation={navigation} lawyerInfo={lawyerInfo} />
-
+        <TextInput
+          style={styles.input}
+          placeholderTextColor={'black'}
+          value={username}
+          placeholder="اسم المستخدم"
+          onChangeText={e => handleOnChange(e, 'username')}
+        />
         <View style={styles.inputContainer}>
           <View style={styles.nameInput}>
             <TextInput
@@ -156,7 +219,7 @@ export default function LawyerRegister() {
           style={styles.input}
           placeholderTextColor={'black'}
           value={phoneNumber}
-          placeholder="رقم الهاتف"
+          placeholder="رقم الهاتف (اختياري)"
           onChangeText={e => handleOnChange(e, 'phoneNumber')}
         />
 
@@ -189,15 +252,12 @@ export default function LawyerRegister() {
             {showPassword ? 'اخفاء كلمة السر' : 'إظهار كلمة السر'}
           </Text>
         </TouchableOpacity>
-        <TextInput
-          style={styles.input}
-          placeholderTextColor={'black'}
-          value={ppn}
-          keyboardType="number-pad"
-          placeholder="رقم مزاولة المهنة"
-          onChangeText={e => handleOnChange(e, 'ppn')}
+        <Checkbox
+          text="من خلال إنشاء حساب، فإنك توافق على شروط الاستخدام وسياسة
+          الخصوصية الخاصة بنا "
+          onPress={isChecked => setCheckBoxState(isChecked)}
         />
-        <ButtonReuse text="متابعة التسجيل" onPress={handlePress} />
+        <ButtonReuse text="تسجيل" onPress={handlePress} />
       </View>
     </>
   );

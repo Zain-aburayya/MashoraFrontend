@@ -1,6 +1,8 @@
 /* eslint-disable react-native/no-inline-styles */
-import React, {useState} from 'react';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import React, {useEffect, useState} from 'react';
 import {
+  Alert,
   StyleSheet,
   Text,
   TextInput,
@@ -8,6 +10,9 @@ import {
   View,
 } from 'react-native';
 import {OtpInput} from 'react-native-otp-entry';
+import {user_change_password} from '../api/user_api';
+import {isValidPassword} from '../validation/Password';
+import {useNavigation} from '@react-navigation/native';
 
 function Title() {
   return (
@@ -17,64 +22,94 @@ function Title() {
   );
 }
 
-function ButtonReuse({text, onPress}) {
-  return (
-    <TouchableOpacity
-      style={[styles.button2, {marginBottom: 100, marginTop: -100}]}
-      onPress={onPress}>
-      <Text style={styles.buttonText2}>{text}</Text>
-    </TouchableOpacity>
-  );
-}
-
-function ResetPassword() {
+function ResetPassword({route}) {
+  console.log(route.params.email);
   const [resetPass, setResetPass] = useState({
-    otp: '',
-    newPassword: '',
-    confPassword: '',
+    email: '',
+    OTP: '',
+    password: '',
+    confirmPassword: '',
   });
-
-  const {otp, newPassword, confPassword} = resetPass;
+  const errorMessages = {
+    confPassword: 'كلمة المرور غير متطابقة',
+  };
+  const {OTP, password, confirmPassword} = resetPass;
   const [showPassword, setShowPassword] = useState(false);
-  function handleOnChange(value, feildName) {
-    console.log(feildName, ' == ', value);
-    setResetPass({...resetPass, [feildName]: value});
-  }
 
-  function handleResetPassword() {
+  // Use useEffect to set the email when the component mounts
+  useEffect(() => {
+    handleOnChange(route.params.email, 'email');
+  }, [route.params.email]);
+
+  function handleOnChange(value, fieldName) {
+    console.log(fieldName, ' == ', value);
+    setResetPass(prevState => ({...prevState, [fieldName]: value}));
+  }
+  const navigation = useNavigation();
+
+  function handleChangePassword() {
     // TODO Call an API to reset password
+    if (!isValidPassword(password)) {
+      Alert.alert('خطأ في تأكيد كلمة السر', errorMessages.confPassword, [
+        {text: 'حسناً'},
+      ]);
+    } else {
+      user_change_password({
+        email: resetPass.email,
+        password: resetPass.password,
+        confirmPassword: resetPass.confirmPassword,
+        OTP: resetPass.OTP,
+      })
+        .then(result => {
+          console.log(result);
+          navigation.navigate('Main');
+        })
+        .catch(err => {
+          console.log(err);
+        });
+    }
   }
 
   return (
     <View style={styles.container}>
       <Title />
+      <Text
+        style={{
+          fontSize: 20,
+          fontWeight: 'bold',
+          color: '#8A6F42',
+          marginBottom: 20,
+        }}>
+        ادخل رمز التحقق
+      </Text>
       <OtpInput
         numberOfDigits={6}
         focusColor="#8A6F42"
         focusStickBlinkingDuration={500}
-        onFilled={e => handleOnChange(e, 'otp')}
+        onFilled={e => handleOnChange(e, 'OTP')}
         textInputProps={{
           accessibilityLabel: 'One-Time Password',
         }}
         theme={{
+          pinCodeContainerStyle: {borderColor: 'gray'},
           containerStyle: {marginBottom: 30, width: 350},
         }}
       />
       <TextInput
         style={[styles.input, {textAlign: 'right'}]}
         placeholderTextColor={'black'}
-        value={newPassword}
+        value={password}
         secureTextEntry={!showPassword}
         placeholder="كلمة المرور الجديدة"
-        onChangeText={e => handleOnChange(e, 'newPassword')}
+        onChangeText={e => handleOnChange(e, 'password')}
       />
       <TextInput
         style={[styles.input, {textAlign: 'right'}]}
         placeholderTextColor={'black'}
-        vvalue={confPassword}
+        value={confirmPassword}
         secureTextEntry={!showPassword}
         placeholder="تأكيد كلمة المرور"
-        onChangeText={e => handleOnChange(e, 'confPassword')}
+        onChangeText={e => handleOnChange(e, 'confirmPassword')}
       />
       <TouchableOpacity
         style={{marginBottom: 100, flex: 0.5}}
@@ -88,7 +123,11 @@ function ResetPassword() {
           {showPassword ? 'اخفاء كلمة المرور' : 'إظهار كلمة المرور'}
         </Text>
       </TouchableOpacity>
-      <ButtonReuse text={'تغيير كلمة المرور'} />
+      <TouchableOpacity
+        style={[styles.button2, {marginBottom: 100, marginTop: -100}]}
+        onPress={() => handleChangePassword()}>
+        <Text style={styles.buttonText2}>تغيير كلمة المرور</Text>
+      </TouchableOpacity>
     </View>
   );
 }
@@ -115,7 +154,6 @@ const styles = StyleSheet.create({
   nameInput: {
     paddingHorizontal: 3,
   },
-
   input: {
     height: 60,
     width: 350,

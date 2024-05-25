@@ -10,23 +10,24 @@ import AboutUs from './src/screens/AboutusUI';
 import Wallet from './src/screens/walletUI';
 import {NavigationContainer} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
-import ChatList from './src/screens/ChatList';
+import ChatListLawyer from './src/screens/ChatListLawyer';
 import Chat from './src/screens/Chat';
 import Splash from './src/screens/Splash';
 import PostMain from './src/screens/PostMain';
-import ChatListLawyer from './src/screens/ChatListLawyer';
+import ChatList from './src/screens/ChatList';
 import ChatBot from './src/screens/ChatBot';
 import Main from './src/screens/Main';
 import PostUI from './src/screens/PostUI';
 import PostQuestion from './src/screens/PostQuestion';
 import Profile from './src/screens/Profile';
 import ClickedProfile from './src/screens/ClickedProfile';
+import ForgetPassword from './src/screens/ForgetPassword';
 const Stack = createNativeStackNavigator();
 
 function App() {
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName="LoginScreen">
+      <Stack.Navigator initialRouteName="Splash">
         <Stack.Screen
           name="UserRegister"
           component={UserRegister}
@@ -50,7 +51,11 @@ function App() {
           component={PostMain}
           options={{headerBackVisible: false}}
         />
-        <Stack.Screen name="ChatList" component={ChatList} />
+        <Stack.Screen
+          name="ChatList"
+          component={ChatList}
+          options={{headerBackVisible: false}}
+        />
         <Stack.Screen
           name="ChatBot"
           component={ChatBot}
@@ -61,12 +66,17 @@ function App() {
           component={Main}
           options={{headerBackVisible: false, headerShown: false}}
         />
-        <Stack.Screen name="ResetPassword" component={ResetPassword} />
+        <Stack.Screen
+          name="ResetPassword"
+          component={ResetPassword}
+          options={{headerBackVisible: false, headerShown: false}}
+        />
         <Stack.Screen
           name="Settings"
           component={SettingsUI}
           options={{headerTitle: 'الاعدادات'}}
         />
+        <Stack.Screen name="ForgetPassword" component={ForgetPassword} />
         <Stack.Screen name="Splash" component={Splash} />
         <Stack.Screen
           name="ContactUs"

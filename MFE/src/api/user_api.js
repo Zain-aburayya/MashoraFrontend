@@ -36,7 +36,7 @@ export const user_password_reset = async data => {
     const token = await AsyncStorage.getItem('token');
     console.log(token);
     const result = await ApiManager(
-      `/auth/forgetPasswordEmail?email=${data.email})`,
+      `/auth/forgetPasswordEmail?email=${data.email}`,
       {
         method: 'POST',
         headers: {
@@ -45,6 +45,24 @@ export const user_password_reset = async data => {
         },
       },
     );
+    return result;
+  } catch (err) {
+    return err.response.data;
+  }
+};
+
+export const user_change_password = async data => {
+  try {
+    const token = await AsyncStorage.getItem('token');
+    console.log(token);
+    const result = await ApiManager('/auth/changePassword', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      data: data,
+    });
     return result;
   } catch (err) {
     return err.response.data;

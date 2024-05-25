@@ -18,7 +18,13 @@ let id = '';
 
 const ChatList = () => {
   const [users, setUsers] = useState([]);
+  const [role, setRole] = useState('');
   const navigation = useNavigation();
+  useEffect(() => {
+    AsyncStorage.getItem('role').then(res => {
+      setRole(res);
+    });
+  }, []);
   useEffect(() => {
     getUsers();
   }, []);
@@ -55,29 +61,43 @@ const ChatList = () => {
   };
   return (
     <View style={styles.container}>
-      <FlatList
-        data={users}
-        renderItem={({item, index}) => {
-          return (
-            <TouchableOpacity
-              style={styles.userItem}
-              onPress={() => {
-                navigation.navigate('Chat', {data: item, id: id});
-              }}>
-              <Image
-                source={require('./Images/profile.png')}
-                style={styles.userIcon}
-              />
-              <Text style={styles.name}>{item.username}</Text>
-            </TouchableOpacity>
-          );
-        }}
-      />
-      <TouchableOpacity
-        style={styles.addButton}
-        onPress={() => navigation.navigate('ChatListLawyer')}>
-        <MaterialIcons name="post-add" size={30} color="#FFFFFF" />
-      </TouchableOpacity>
+      {users.length > 0 ? (
+        <FlatList
+          data={users}
+          renderItem={({item, index}) => {
+            return (
+              <TouchableOpacity
+                style={styles.userItem}
+                onPress={() => {
+                  navigation.navigate('Chat', {data: item, id: id});
+                }}>
+                <Image
+                  source={require('./Images/profile.png')}
+                  style={styles.userIcon}
+                />
+                <Text style={styles.name}>{item.username}</Text>
+              </TouchableOpacity>
+            );
+          }}
+        />
+      ) : (
+        <Text
+          style={{
+            textAlign: 'center',
+            fontSize: 20,
+            fontStyle: 'normal',
+            fontWeight: 'bold',
+          }}>
+          لا يوجد اي رسائل من قبل...
+        </Text>
+      )}
+      {role === 'ROLE_CUSTOMER' && (
+        <TouchableOpacity
+          style={styles.addButton}
+          onPress={() => navigation.navigate('ChatListLawyer')}>
+          <MaterialIcons name="post-add" size={30} color="#FFFFFF" />
+        </TouchableOpacity>
+      )}
     </View>
   );
 };
