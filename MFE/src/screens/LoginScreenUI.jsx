@@ -153,7 +153,10 @@ function LoginScreen() {
           {showPassword ? 'اخفاء كلمة المرور' : 'إظهار كلمة المرور'}
         </Text>
       </TouchableOpacity>
-      <TouchableOpacity>
+      <TouchableOpacity
+        onPress={() => {
+          navigation.navigate('ForgetPassword');
+        }}>
         <Text style={{fontWeight: 'bold'}}>هل نسيت كلمة المرور؟</Text>
       </TouchableOpacity>
       <ButtonReuse text={'دخول'} onPress={() => handleLogin()} />

@@ -137,22 +137,6 @@ export default function UserRegister() {
     })
       .then(result => {
         if (result.status === 200) {
-          const userId = uuid.v4();
-          firestore()
-            .collection('users')
-            .doc(userId)
-            .set({
-              username: username,
-              firstname: firstname,
-              lastname: lastname,
-              phoneNumber: phoneNumber,
-              email: email,
-              password: password,
-              userId: userId,
-            })
-            .catch(error => {
-              console.log(error);
-            });
           navigation.navigate('LoginScreen');
         } else if (result.message === 'Error: Username is already taken!') {
           Alert.alert(
@@ -170,6 +154,22 @@ export default function UserRegister() {
       })
       .catch(err => {
         console.error(err);
+      });
+    const userId = uuid.v4();
+    firestore()
+      .collection('users')
+      .doc(userId)
+      .set({
+        username: username,
+        firstname: firstname,
+        lastname: lastname,
+        phoneNumber: phoneNumber,
+        email: email,
+        userId: userId,
+        role: 'ROLE_CUSTOMER',
+      })
+      .catch(error => {
+        console.log(error);
       });
   };
 
@@ -219,7 +219,7 @@ export default function UserRegister() {
           style={styles.input}
           placeholderTextColor={'black'}
           value={phoneNumber}
-          placeholder="رقم الهاتف"
+          placeholder="رقم الهاتف (اختياري)"
           onChangeText={e => handleOnChange(e, 'phoneNumber')}
         />
 

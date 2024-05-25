@@ -14,6 +14,7 @@ import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 // Assume you have a navigation library like React Navigation
 import {useNavigation} from '@react-navigation/native';
 import {user_password_reset} from '../api/user_api';
+import ResetPassword from './ResetPasswordUI';
 
 function Title() {
   return (
@@ -80,9 +81,11 @@ function Profile() {
   const handleEditOptionPress = option => {
     setShowMenu(false);
     if (option === 'editPassword') {
+      //console.log(userInfo.email);
       user_password_reset({email: userInfo.email})
         .then(result => {
-          console.log(userInfo.email);
+          console.log(result);
+          navigation.navigate('ResetPassword', {email: userInfo.email});
         })
         .catch(err => {
           console.log(err);
