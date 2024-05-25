@@ -1,3 +1,4 @@
+/* eslint-disable react-native/no-inline-styles */
 /* eslint-disable react-hooks/exhaustive-deps */
 import {
   View,
@@ -14,27 +15,17 @@ import ChatList from './ChatList';
 import PostPage from './PostMain';
 import Foundation from 'react-native-vector-icons/Foundation';
 import {useNavigation} from '@react-navigation/native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const LawyerMain = ({route}) => {
+const LawyerMain = () => {
   const navigation = useNavigation();
   const [selectedTab, setSelectedTab] = useState(1);
-  const [reloadKey, setReloadKey] = useState(0);
-
-  const handleTabSelect = tabIndex => {
-    setSelectedTab(tabIndex);
-    if (tabIndex === 2) {
-      setReloadKey(prevKey => prevKey + 1); // Increment the reload key to force re-render
-    }
-  };
-
+  const [role, setRole] = useState('');
   useEffect(() => {
-    if (route && route.params && route.params.tab !== undefined) {
-      setSelectedTab(route.params.tab);
-      handleTabSelect(2);
-      navigation.setParams({tab: undefined});
-    }
+    AsyncStorage.getItem('role').then(res => {
+      setRole(res);
+    });
   }, []);
-
   useEffect(() => {
     const backAction = () => {
       Alert.alert('تمهل!', 'هل أنت متأكد من خروجك من التطيبق ؟', [
@@ -71,13 +62,22 @@ const LawyerMain = ({route}) => {
             backgroundColor="#DAD2C5"
           />
         </TouchableOpacity>
+        {role === 'ROLE_CUSTOMER' && (
+          <TouchableOpacity
+            style={styles.tabtop}
+            onPress={() => {
+              navigation.navigate('Section');
+            }}>
+            <Text style={styles.sectionTab}>الأقسام</Text>
+          </TouchableOpacity>
+        )}
       </View>
       {selectedTab === 1 ? (
         <ChatBot />
       ) : selectedTab === 0 ? (
         <ChatList />
       ) : (
-        <PostPage key={reloadKey} />
+        <PostPage />
       )}
       <View style={styles.bottomTab}>
         <TouchableOpacity
@@ -151,7 +151,7 @@ const styles = StyleSheet.create({
   tabtop: {
     width: '50%',
     height: '100%',
-    justifyContent: 'center',
+    justifyContent: 'space-around',
     alignItems: 'flex-end',
     marginRight: 20,
   },
@@ -172,5 +172,20 @@ const styles = StyleSheet.create({
   text: {
     color: 'black',
     fontWeight: 'bold',
+  },
+  sectionTab: {
+    textAlign: 'center',
+    color: 'white',
+    justifyContent: 'center',
+    alignContent: 'center',
+    alignItems: 'center',
+    marginRight: 70,
+    fontSize: 18,
+    fontWeight: 'bold',
+    borderRadius: 12,
+    width: 80,
+    height: 40,
+    backgroundColor: '#8A6F42',
+    paddingTop: 7,
   },
 });

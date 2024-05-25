@@ -1,3 +1,4 @@
+import React, {useEffect, useState} from 'react';
 import {
   View,
   Text,
@@ -8,88 +9,88 @@ import {
   Image,
   TouchableOpacity,
 } from 'react-native';
-import React, {useEffect, useState} from 'react';
 import firestore from '@react-native-firebase/firestore';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {useNavigation} from '@react-navigation/native';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 
-let id = '';
-
 const ChatList = () => {
   const [users, setUsers] = useState([]);
   const [role, setRole] = useState('');
+  const [roleFirestore, setRoleFireStore] = useState('');
+  const [id, setId] = useState('');
   const navigation = useNavigation();
-  useEffect(() => {
-    AsyncStorage.getItem('role').then(res => {
-      setRole(res);
-    });
-  }, []);
-  useEffect(() => {
-    getUsers();
-  }, []);
-  const getUsers = async () => {
-    try {
-      id = await AsyncStorage.getItem('USERID');
-      const email = await AsyncStorage.getItem('username');
-      const tempData = [];
-      console.log(email);
-      const usersSnapshot = await firestore()
-        .collection('users')
-        .where('role', '==', 'ROLE_LAWYER')
-        .get();
 
-      await Promise.all(
-        usersSnapshot.docs.map(async userDoc => {
-          const toId = userDoc.data().userId;
-          const messagesSnapshot = await firestore()
-            .collection('chats')
-            .doc(id + toId)
-            .collection('messages')
-            .get();
-
-          if (messagesSnapshot.docs.length > 0) {
-            tempData.push(userDoc.data());
-          }
-        }),
+  useEffect(() => {
+    const fetchData = async () => {
+      const storedRole = await AsyncStorage.getItem('role');
+      setRole(storedRole);
+      setRoleFireStore(
+        storedRole === 'ROLE_LAWYER' ? 'ROLE_CUSTOMER' : 'ROLE_LAWYER',
       );
+    };
 
-      setUsers(tempData);
-    } catch (error) {
-      console.error('Error fetching users:', error);
-    }
-  };
+    fetchData();
+  }, []);
+
+  useEffect(() => {
+    const getUsers = async () => {
+      try {
+        const storedId = await AsyncStorage.getItem('USERID');
+        setId(storedId);
+        const email = await AsyncStorage.getItem('username');
+        const tempData = [];
+        const usersSnapshot = await firestore()
+          .collection('users')
+          .where('role', '==', roleFirestore)
+          .get();
+
+        await Promise.all(
+          usersSnapshot.docs.map(async userDoc => {
+            const toId = userDoc.data().userId;
+            const messagesSnapshot = await firestore()
+              .collection('chats')
+              .doc(storedId + toId)
+              .collection('messages')
+              .get();
+
+            if (messagesSnapshot.docs.length > 0) {
+              tempData.push(userDoc.data());
+            }
+          }),
+        );
+
+        setUsers(tempData);
+      } catch (error) {
+        console.error('Error fetching users:', error);
+      }
+    };
+
+    getUsers();
+  }, [roleFirestore]);
+
   return (
     <View style={styles.container}>
       {users.length > 0 ? (
         <FlatList
           data={users}
-          renderItem={({item, index}) => {
-            return (
-              <TouchableOpacity
-                style={styles.userItem}
-                onPress={() => {
-                  navigation.navigate('Chat', {data: item, id: id});
-                }}>
-                <Image
-                  source={require('./Images/profile.png')}
-                  style={styles.userIcon}
-                />
-                <Text style={styles.name}>{item.username}</Text>
-              </TouchableOpacity>
-            );
-          }}
+          renderItem={({item}) => (
+            <TouchableOpacity
+              style={styles.userItem}
+              onPress={() => {
+                navigation.navigate('Chat', {data: item, id: id});
+              }}>
+              <Image
+                source={require('./Images/profile.png')}
+                style={styles.userIcon}
+              />
+              <Text style={styles.name}>{item.username}</Text>
+            </TouchableOpacity>
+          )}
+          keyExtractor={(item, index) => index.toString()}
         />
       ) : (
-        <Text
-          style={{
-            textAlign: 'center',
-            fontSize: 20,
-            fontStyle: 'normal',
-            fontWeight: 'bold',
-          }}>
-          لا يوجد اي رسائل من قبل...
-        </Text>
+        <Text style={styles.noMessagesText}>لا يوجد اي رسائل من قبل...</Text>
       )}
       {role === 'ROLE_CUSTOMER' && (
         <TouchableOpacity
@@ -101,25 +102,19 @@ const ChatList = () => {
     </View>
   );
 };
+
 export default ChatList;
+
 const styles = StyleSheet.create({
   container: {
-    flex: 0.85,
+    flex: 1,
     marginTop: StatusBar.currentHeight + 45 || 0,
   },
-
-  header: {
-    width: '100%',
-    height: 60,
-    backgroundColor: 'white',
-    elevation: 5,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  title: {
-    color: 'purple',
+  noMessagesText: {
+    textAlign: 'center',
     fontSize: 20,
-    fontWeight: '600',
+    fontStyle: 'normal',
+    fontWeight: 'bold',
   },
   userItem: {
     width: Dimensions.get('window').width - 50,
