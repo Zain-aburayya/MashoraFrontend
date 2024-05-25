@@ -1,3 +1,4 @@
+/* eslint-disable react-native/no-inline-styles */
 import {useNavigation} from '@react-navigation/native';
 import React, {useState} from 'react';
 import {
@@ -34,7 +35,10 @@ function ForgetPassword() {
           user_password_reset({email: email})
             .then(result => {
               console.log(result);
-              navigation.navigate('ResetPassword', {email: email});
+              navigation.navigate('ResetPassword', {
+                email: email,
+                from: 'forgetPassword',
+              });
             })
             .catch(err => {
               console.log(err);
