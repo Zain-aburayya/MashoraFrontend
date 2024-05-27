@@ -1,3 +1,4 @@
+/* eslint-disable react-native/no-inline-styles */
 import {useNavigation} from '@react-navigation/native';
 import React, {useEffect, useState} from 'react';
 import {
@@ -64,7 +65,6 @@ const Item = ({data}) => {
 function SectionList({route}) {
   const [lawyers, setLawyers] = useState([]);
   const [refreshing, setRefreshing] = useState(false);
-  const navigation = useNavigation();
   console.log(route.params.fieldName);
   const onRefresh = () => {
     setRefreshing(true);
@@ -90,8 +90,8 @@ function SectionList({route}) {
   return (
     <View style={styles.container}>
       <View style={styles.card}>
-        <Text style={styles.title}>القانون المدني</Text>
-        <Text>الهنلىةصثقخهىثلقخهلىثخقهلى</Text>
+        <Text style={styles.title}>{route.params.fieldNameArabic}</Text>
+        <Text style={{fontSize: 18}}>{route.params.aboutField}</Text>
       </View>
       <FlatList
         data={lawyers}
