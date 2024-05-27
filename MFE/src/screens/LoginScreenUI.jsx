@@ -63,7 +63,7 @@ function LoginScreen() {
           .collection('users')
           .where('username', '==', result.data.username)
           .get();
-
+        console.log('usrname inside the firestore : ', result.data.username);
         if (!userQuerySnapshot.empty) {
           console.log(
             'from login -> ',
