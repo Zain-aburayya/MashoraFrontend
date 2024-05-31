@@ -72,3 +72,28 @@ export const lawyer_certificate = async data => {
     throw err;
   }
 };
+
+export const lawyer_update_strength = async data => {
+  try {
+    const token = await AsyncStorage.getItem('token');
+    console.log(data);
+    const response = await fetch(
+      'http://10.0.2.2:8080/api/lawyers/updateLawyerStrength',
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'multipart/form-data',
+          Authorization: `Bearer ${token}`,
+        },
+        body: data.formData,
+      },
+    );
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    return response;
+  } catch (err) {
+    console.error(err);
+    throw err;
+  }
+};

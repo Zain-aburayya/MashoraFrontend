@@ -38,7 +38,7 @@ function ButtonReuse({emoji, text, color, backColor, navigateTo}) {
   );
 }
 
-function SettingsUI() {
+function SettingsUI({route}) {
   const navigation = useNavigation();
   function handleLoguot() {
     Alert.alert('تسجيل الخروج', 'هل أنت متأكد من تسجيل خروجك ؟', [
@@ -64,6 +64,22 @@ function SettingsUI() {
 
   return (
     <View style={styles.container}>
+      <View style={styles.absoluteButtonContainer}>
+        <Entypo.Button
+          name={'arrow-left'}
+          color={'#E6E0D7'}
+          size={30}
+          backgroundColor={'#8A6F42'}
+          onPress={() => {
+            navigation.navigate(route.params.page);
+          }}
+          style={{
+            flexDirection: 'row-reverse',
+            width: 50,
+          }}
+        />
+      </View>
+
       <ButtonReuse
         text={'حسابي'}
         color={'#8A6F42'}
@@ -72,34 +88,34 @@ function SettingsUI() {
         navigateTo={'Profile'}
       />
 
-      <ButtonReuse
+      {/* <ButtonReuse
         text={'محفظتي'}
         backColor={'#8A6F42'}
         color={'#E6E0D7'}
         emoji={'wallet'}
         navigateTo={'Wallet'}
-      />
+      /> */}
 
       <ButtonReuse
         text={'إتصل بنا'}
-        color={'#8A6F42'}
-        backColor={'#E6E0D7'}
+        color={'#E6E0D7'}
+        backColor={'#8A6F42'}
         emoji={'phone'}
         navigateTo={'ContactUs'}
       />
 
       <ButtonReuse
         text={'عن مشورة'}
-        backColor={'#8A6F42'}
-        color={'#E6E0D7'}
+        backColor={'#E6E0D7'}
+        color={'#8A6F42'}
         emoji={'text-document'}
         navigateTo={'AboutUs'}
       />
       <Entypo.Button
         name={'log-out'}
-        color={'#8A6F42'}
+        color={'#E6E0D7'}
         size={40}
-        backgroundColor={'#E6E0D7'}
+        backgroundColor={'#8A6F42'}
         onPress={() => {
           handleLoguot();
         }}
@@ -111,7 +127,7 @@ function SettingsUI() {
           style={{
             fontSize: 25,
             fontWeight: 'bold',
-            color: '#8A6F42',
+            color: '#E6E0D7',
             flex: 1,
             textAlign: 'center',
           }}>
@@ -137,6 +153,11 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: '#f2efeb',
+  },
+  absoluteButtonContainer: {
+    position: 'absolute',
+    top: 30,
+    left: 30,
   },
   inputContainer: {
     flexDirection: 'row',

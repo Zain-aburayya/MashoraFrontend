@@ -17,7 +17,7 @@ import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import {get_post_comments, set_comment} from '../api/post_api';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const Item = ({data, navigation}) => {
+const Item = ({data, navigation, role}) => {
   const date = new Date(data.timestamp);
   const hours = String(date.getHours()).padStart(2, '0');
   const minutes = String(date.getMinutes()).padStart(2, '0');
@@ -42,13 +42,18 @@ const Item = ({data, navigation}) => {
         </TouchableOpacity>
       </View>
       <Text style={styles.title}>{data.content}</Text>
+
       <View style={styles.bottomContainer}>
-        <TouchableOpacity style={styles.button}>
-          <Text>اوافق</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.button}>
-          <Text>لا اوافق</Text>
-        </TouchableOpacity>
+        {role === 'ROLE_LAWYER' && (
+          <>
+            <TouchableOpacity style={styles.button}>
+              <Text>اوافق</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.button}>
+              <Text>لا اوافق</Text>
+            </TouchableOpacity>
+          </>
+        )}
         <Text>{hours + ':' + minutes}</Text>
         <Text>{ymd}</Text>
       </View>
@@ -138,7 +143,9 @@ function PostUI({route}) {
       </View>
       <FlatList
         data={comments}
-        renderItem={({item}) => <Item data={item} navigation={navigation} />}
+        renderItem={({item}) => (
+          <Item data={item} navigation={navigation} role={role} />
+        )}
         keyExtractor={item => item.id}
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
@@ -151,7 +158,7 @@ function PostUI({route}) {
             style={styles.input}
             placeholderTextColor={'black'}
             value={content}
-            placeholder="اسم المستخدم"
+            placeholder="اكتب تعليقك..."
             onChangeText={e => setContent(e)}
           />
           <FontAwesome.Button

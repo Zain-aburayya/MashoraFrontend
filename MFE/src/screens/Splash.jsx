@@ -29,8 +29,10 @@ const Splash = () => {
         .catch(error => {
           console.log(error);
         });
-    } else if (role !== null) {
+    } else if (role !== null && role === 'ROLE_CUSTOMER') {
       navigation.navigate('Main');
+    } else if (role !== null && role === 'ROLE_ADMIN') {
+      navigation.navigate('AdminMain');
     } else {
       navigation.navigate('LoginScreen');
     }

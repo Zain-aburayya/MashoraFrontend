@@ -25,6 +25,8 @@ import ForgetPassword from './src/screens/ForgetPassword';
 import Section from './src/screens/Section';
 import SectionList from './src/screens/SectionList';
 import SectionLawyer from './src/screens/SectionLawyer';
+import AdminMain from './src/screens/AdminMain';
+import EditStrength from './src/screens/EditStrength';
 const Stack = createNativeStackNavigator();
 
 function App() {
@@ -74,6 +76,11 @@ function App() {
           options={{headerBackVisible: false, headerShown: false}}
         />
         <Stack.Screen
+          name="AdminMain"
+          component={AdminMain}
+          options={{headerBackVisible: false, headerShown: false}}
+        />
+        <Stack.Screen
           name="ResetPassword"
           component={ResetPassword}
           options={{headerBackVisible: false, headerShown: false}}
@@ -81,9 +88,10 @@ function App() {
         <Stack.Screen
           name="Settings"
           component={SettingsUI}
-          options={{headerTitle: 'الاعدادات'}}
+          options={{headerBackVisible: false, headerShown: false}}
         />
         <Stack.Screen name="ForgetPassword" component={ForgetPassword} />
+        <Stack.Screen name="EditStrength" component={EditStrength} />
         <Stack.Screen name="Splash" component={Splash} />
         <Stack.Screen
           name="ContactUs"
