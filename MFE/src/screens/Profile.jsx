@@ -2,9 +2,8 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import React, {useEffect, useState} from 'react';
 import {Image, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
-import Checkbox from '../components/Checkbox';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
-
+import Checkbox from '../components/Checkbox';
 // Assume you have a navigation library like React Navigation
 import {useNavigation} from '@react-navigation/native';
 import {user_password_reset} from '../api/user_api';
@@ -28,7 +27,10 @@ function Profile() {
   });
 
   const [showMenu, setShowMenu] = useState(false); // State for menu visibility
-  const menuOptions = [{text: 'تعديل كلمة المرور', value: 'editPassword'}];
+  const menuOptions = [
+    {text: 'تعديل كلمة المرور', value: 'editPassword'},
+    {text: 'تعديل الخبرات', value: 'editStrength'},
+  ];
 
   const navigation = useNavigation(); // Get navigation reference
 
@@ -86,19 +88,26 @@ function Profile() {
         .catch(err => {
           console.log(err);
         });
+    } else if (option === 'editStrength') {
+      navigation.navigate('EditStrength');
     }
   };
 
   const renderMenu = () => (
     <View style={styles.menuContainer}>
-      {menuOptions.map(option => (
-        <TouchableOpacity
-          key={option.value}
-          onPress={() => handleEditOptionPress(option.value)}
-          style={styles.menuItem}>
-          <Text style={styles.menuText}>{option.text}</Text>
-        </TouchableOpacity>
-      ))}
+      {menuOptions
+        .filter(
+          option =>
+            option.value !== 'editStrength' || userInfo.role === 'ROLE_LAWYER',
+        )
+        .map(option => (
+          <TouchableOpacity
+            key={option.value}
+            onPress={() => handleEditOptionPress(option.value)}
+            style={styles.menuItem}>
+            <Text style={styles.menuText}>{option.text}</Text>
+          </TouchableOpacity>
+        ))}
     </View>
   );
 
@@ -219,8 +228,6 @@ const styles = StyleSheet.create({
   },
   menuContainer: {
     position: 'absolute', // Position menu appropriately (consider overflow)
-    // top: /* adjust based on button placement */,
-    // right: /* adjust based on button placement */,
     right: 0,
     top: 50,
     padding: 10,

@@ -16,8 +16,9 @@ import PostPage from './PostMain';
 import Foundation from 'react-native-vector-icons/Foundation';
 import {useNavigation} from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import ComplaintsPage from './ComplaintsPage';
 
-const LawyerMain = () => {
+const AdminMain = () => {
   const navigation = useNavigation();
   const [selectedTab, setSelectedTab] = useState(1);
   const [role, setRole] = useState('');
@@ -55,7 +56,7 @@ const LawyerMain = () => {
         <TouchableOpacity
           style={styles.tabtop}
           onPress={() => {
-            navigation.navigate('Settings', {page: 'Main'});
+            navigation.navigate('Settings', {page: 'AdminMain'});
           }}>
           <Foundation
             name="list"
@@ -77,7 +78,7 @@ const LawyerMain = () => {
       {selectedTab === 1 ? (
         <ChatBot />
       ) : selectedTab === 0 ? (
-        <ChatList />
+        <ComplaintsPage />
       ) : (
         <PostPage />
       )}
@@ -88,10 +89,10 @@ const LawyerMain = () => {
             setSelectedTab(0);
           }}>
           <Image
-            source={require('./Images/MessageImage.png')}
+            source={require('./Images/complaints.png')}
             style={[styles.tabIcon]}
           />
-          <Text style={styles.text}>رسائل</Text>
+          <Text style={styles.text}>الشكاوي</Text>
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.tab}
@@ -123,7 +124,7 @@ const LawyerMain = () => {
     </View>
   );
 };
-export default LawyerMain;
+export default AdminMain;
 
 const styles = StyleSheet.create({
   container: {

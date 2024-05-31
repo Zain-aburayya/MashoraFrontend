@@ -59,20 +59,22 @@ function LoginScreen() {
       //console.log('---', username);
       const result = await user_login({username: username, password: password});
       if (result.status === 200) {
-        const userQuerySnapshot = await firestore()
-          .collection('users')
-          .where('username', '==', result.data.username)
-          .get();
-        console.log('usrname inside the firestore : ', result.data.username);
-        if (!userQuerySnapshot.empty) {
-          console.log(
-            'from login -> ',
-            JSON.stringify(userQuerySnapshot.docs[0].data()),
-          );
-          await goToNext(userQuerySnapshot.docs[0].data().userId);
-        } else {
-          Alert.alert('User not found');
-          return;
+        if (result.data.roles[0] !== 'ROLE_ADMIN') {
+          const userQuerySnapshot = await firestore()
+            .collection('users')
+            .where('username', '==', result.data.username)
+            .get();
+          console.log('usrname inside the firestore : ', result.data.username);
+          if (!userQuerySnapshot.empty) {
+            console.log(
+              'from login -> ',
+              JSON.stringify(userQuerySnapshot.docs[0].data()),
+            );
+            await goToNext(userQuerySnapshot.docs[0].data().userId);
+          } else {
+            Alert.alert('User not found');
+            return;
+          }
         }
 
         // eslint-disable-next-line no-shadow
@@ -106,8 +108,10 @@ function LoginScreen() {
             .catch(error => {
               console.log(error);
             });
-        } else {
+        } else if (roles[0] === 'ROLE_CUSTOMER') {
           navigation.navigate('Main');
+        } else if (roles[0] === 'ROLE_ADMIN') {
+          navigation.navigate('AdminMain');
         }
       } else {
         Alert.alert(
