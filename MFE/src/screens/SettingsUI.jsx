@@ -88,34 +88,34 @@ function SettingsUI({route}) {
         navigateTo={'Profile'}
       />
 
-      {/* <ButtonReuse
+      <ButtonReuse
         text={'محفظتي'}
         backColor={'#8A6F42'}
         color={'#E6E0D7'}
         emoji={'wallet'}
         navigateTo={'Wallet'}
-      /> */}
+      />
 
       <ButtonReuse
         text={'إتصل بنا'}
-        color={'#E6E0D7'}
-        backColor={'#8A6F42'}
+        backColor={'#E6E0D7'}
+        color={'#8A6F42'}
         emoji={'phone'}
         navigateTo={'ContactUs'}
       />
 
       <ButtonReuse
         text={'عن مشورة'}
-        backColor={'#E6E0D7'}
-        color={'#8A6F42'}
+        color={'#E6E0D7'}
+        backColor={'#8A6F42'}
         emoji={'text-document'}
         navigateTo={'AboutUs'}
       />
       <Entypo.Button
         name={'log-out'}
-        color={'#E6E0D7'}
+        color={'#8A6F42'}
         size={40}
-        backgroundColor={'#8A6F42'}
+        backgroundColor={'#E6E0D7'}
         onPress={() => {
           handleLoguot();
         }}
@@ -127,13 +127,22 @@ function SettingsUI({route}) {
           style={{
             fontSize: 25,
             fontWeight: 'bold',
-            color: '#E6E0D7',
+            color: '#8A6F42',
             flex: 1,
             textAlign: 'center',
           }}>
           تسجيل الخروج
         </Text>
       </Entypo.Button>
+      <Text
+        style={{
+          fontSize: 20,
+          color: '#8A6F42',
+          textAlign: 'right',
+          marginTop: 100,
+        }}>
+        رقم الشكاوي : 962795927352+
+      </Text>
     </View>
   );
 }

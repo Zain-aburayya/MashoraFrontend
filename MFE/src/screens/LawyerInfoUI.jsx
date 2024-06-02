@@ -13,6 +13,7 @@ import DocumentPicker from 'react-native-document-picker';
 import {lawyer_certificate} from '../api/lawyer_api';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {useNavigation} from '@react-navigation/native';
+// import RNFetchBlob from 'rn-fetch-blob';
 
 function Title({text}) {
   return (
@@ -67,15 +68,56 @@ function LawyerInfo({route}) {
         type: [DocumentPicker.types.pdf, DocumentPicker.types.docx],
         allowMultiSelection: false,
       });
-      console.log(result);
+
       if (result.length > 0) {
         setFile(result[0]);
       }
+
+      // console.log('DocumentPicker result:', result);
+
+      // // Check if the result is an array or an object
+      // const file = Array.isArray(result) ? result[0] : result;
+
+      // console.log('Selected file:', file);
+
+      // // Ensure the file has the expected properties
+      // if (!file || !file.uri || !file.name) {
+      //   throw new Error('Selected file does not have expected properties');
+      // }
+
+      // const fileUri = file.uri;
+      // const fileName = file.name;
+
+      // console.log('Selected file URI:', fileUri);
+      // console.log('Selected file name:', fileName);
+
+      // Upload the file to the local server
+      // RNFetchBlob.fetch(
+      //   'POST',
+      //   'http://10.0.2.2:3000/upload',
+      //   {
+      //     'Content-Type': 'multipart/form-data',
+      //   },
+      //   [
+      //     {
+      //       name: 'file',
+      //       filename: id + 'File',
+      //       data: RNFetchBlob.wrap(fileUri),
+      //     },
+      //   ],
+      // )
+      //   .then(resp => {
+      //     console.log('File uploaded successfully:', resp);
+      //   })
+      //   .catch(err => {
+      //     console.error('Upload failed', err);
+      //   });
     } catch (err) {
       if (DocumentPicker.isCancel(err)) {
         Alert.alert('الغاء', 'تم الغاء اختيار الملف!');
       } else {
         Alert.alert('Error', 'Unknown error: ' + JSON.stringify(err));
+        console.error('Error details:', err);
       }
     }
   };
@@ -93,17 +135,30 @@ function LawyerInfo({route}) {
       type: file.type,
     });
     formData.append('id', id);
-    formData.append('civilLaw', Boolean(civilLaw));
-    formData.append('commercialLaw', commercialLaw);
-    formData.append('internationalLaw', internationalLaw);
-    formData.append('criminalLaw', criminalLaw);
-    formData.append(
-      'administrativeAndFinancialLaw',
-      administrativeAndFinancialLaw,
-    );
-    formData.append('constitutionalLaw', constitutionalLaw);
-    formData.append('privateInternationalLaw', privateInternationalLaw);
-    formData.append('proceduralLaw', proceduralLaw);
+    if (civilLaw) {
+      formData.append('civilLaw', true);
+    }
+    if (commercialLaw) {
+      formData.append('commercialLaw', true);
+    }
+    if (internationalLaw) {
+      formData.append('internationalLaw', true);
+    }
+    if (criminalLaw) {
+      formData.append('criminalLaw', true);
+    }
+    if (administrativeAndFinancialLaw) {
+      formData.append('administrativeAndFinancialLaw', true);
+    }
+    if (constitutionalLaw) {
+      formData.append('constitutionalLaw', true);
+    }
+    if (privateInternationalLaw) {
+      formData.append('privateInternationalLaw', true);
+    }
+    if (proceduralLaw) {
+      formData.append('proceduralLaw', true);
+    }
     lawyer_certificate({
       formData: formData,
     });

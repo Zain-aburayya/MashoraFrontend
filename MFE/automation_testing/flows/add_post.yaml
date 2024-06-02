@@ -1,0 +1,18 @@
+appId: com.mfe
+---
+- runFlow:
+    file: login.yaml
+    env:
+      USERNAME: 'zain_aburayya'
+      PASSWORD: '@Zain2003'
+- tapOn: 'مشورات'
+- tapOn:
+    point: '88%,81%'
+- tapOn: 'اكتب العنوان...'
+- inputText: 'Title from maestroTest'
+- tapOn: 'اكتب سؤالك هنا...'
+- inputText: 'Nothing is important here, I am just doing some testing ...'
+- hideKeyboard
+- tapOn: 'أنشر'
+- swipe: # This command swipes in the left direction from the middle of the device.
+    direction: DOWN

@@ -73,3 +73,44 @@ export const set_post = async data => {
     return err.response.data;
   }
 };
+
+export const upvote_comment = async data => {
+  try {
+    const token = await AsyncStorage.getItem('token');
+
+    const result = await ApiManager(
+      `/comments/vote/${data.id}?commentVote=true`,
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+      },
+    );
+    return result;
+  } catch (err) {
+    return err.response.data;
+  }
+};
+
+export const downvote_comment = async data => {
+  try {
+    const token = await AsyncStorage.getItem('token');
+    // console.log(data.id);
+    const result = await ApiManager(
+      `/comments/vote/${data.id}?commentVote=false`,
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+      },
+    );
+    // console.log(result.data);
+    return result;
+  } catch (err) {
+    return err.response.data;
+  }
+};

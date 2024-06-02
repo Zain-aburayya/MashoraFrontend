@@ -1,5 +1,9 @@
-function isValidName(name: string, field: string): boolean {
-  if (field === 'name' && nameValidation(name) && nameRegexArabic(name)) {
+export function isValidName(name: string, field: string): boolean {
+  if (
+    field === 'name' &&
+    nameValidation(name) &&
+    (nameRegexArabic(name) || nameRegexEnglish(name))
+  ) {
     console.log('wtf');
     return true;
   } else if (
@@ -11,6 +15,12 @@ function isValidName(name: string, field: string): boolean {
     return true;
   }
   return false;
+}
+
+export function isSameLanguage(name1: string, name2: string): boolean {
+  const containsArabic1 = /[\u0600-\u06FF]/u.test(name1);
+  const containsArabic2 = /[\u0600-\u06FF]/u.test(name2);
+  return containsArabic1 === containsArabic2;
 }
 
 function nameValidation(name: string): boolean {
@@ -29,5 +39,3 @@ function nameRegexArabic(name: string): boolean {
   const validNameRegex = /^[\u0600-\u06FF\s-]+$/u;
   return validNameRegex.test(name.trim());
 }
-
-export default isValidName;

@@ -4,9 +4,9 @@ import React, {useEffect, useState} from 'react';
 import {Image, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import Checkbox from '../components/Checkbox';
-// Assume you have a navigation library like React Navigation
 import {useNavigation} from '@react-navigation/native';
 import {user_password_reset} from '../api/user_api';
+import {get_lawyer_fields} from '../api/lawyer_api';
 
 function Title() {
   return (
@@ -32,7 +32,35 @@ function Profile() {
     {text: 'تعديل الخبرات', value: 'editStrength'},
   ];
 
+  const [strengths, setStrengths] = useState([]);
+
   const navigation = useNavigation(); // Get navigation reference
+
+  useEffect(() => {
+    get_lawyer_fields()
+      .then(result => {
+        if (result.status === 200) {
+          const translationDict = {
+            'Civil Law': 'القانون المدني',
+            'Commercial Law': 'القانون التجاري',
+            'International Law': 'القانون الدولي',
+            'Criminal Law': 'القانون الجنائي',
+            'Administrative and Financial Law': 'القانون الإداري والمالي',
+            'Constitutional Law': 'القانون الدستوري',
+            'Private International Law': 'القانون الدولي الخاص',
+            'Procedural Law': 'قانون الإجراءات',
+          };
+          const translatedStrengths = result.data.map(
+            strength => translationDict[strength] || strength,
+          );
+          setStrengths(translatedStrengths);
+          console.log(translatedStrengths);
+        }
+      })
+      .catch(error => {
+        console.log(error);
+      });
+  }, []);
 
   useEffect(() => {
     const fetchUserInfo = async () => {
@@ -76,7 +104,6 @@ function Profile() {
   const handleEditOptionPress = option => {
     setShowMenu(false);
     if (option === 'editPassword') {
-      //console.log(userInfo.email);
       user_password_reset({email: userInfo.email})
         .then(result => {
           console.log(result);
@@ -111,6 +138,17 @@ function Profile() {
     </View>
   );
 
+  const renderStrengths = () => (
+    <View style={styles.strengthsContainer}>
+      <Text style={styles.input}>المجالات التي لديك خبرة فيها ...</Text>
+      {strengths.map((strength, index) => (
+        <View key={index} style={styles.strengthItem}>
+          <Text style={styles.strengthText}>{strength}</Text>
+        </View>
+      ))}
+    </View>
+  );
+
   return (
     <>
       <FontAwesome5.Button
@@ -127,18 +165,11 @@ function Profile() {
         <Title />
         <Image source={require('./Images/profile.png')} style={styles.image} />
         <Text style={styles.input}>{userInfo.username}</Text>
-        <Text style={styles.input}>{userInfo.email}</Text>
-        {userInfo.role === 'ROLE_LAWYER' && (
-          <View style={styles.containerCheckbox}>
-            <Checkbox
-              style={cusStyle}
-              text="القانون المدني   "
-              isChecked={true}
-              flag={true}
-            />
-            {/* ... other Checkbox components */}
-          </View>
+        {userInfo.phoneNumber === '' && (
+          <Text style={styles.input}>{userInfo.phoneNumber}</Text>
         )}
+        <Text style={styles.input}>{userInfo.email}</Text>
+        {userInfo.role === 'ROLE_LAWYER' && renderStrengths()}
       </View>
       {showMenu && renderMenu()}
     </>
@@ -167,17 +198,32 @@ const styles = StyleSheet.create({
   nameInput: {
     paddingHorizontal: 3,
   },
-  containerCheckbox: {
-    justifyContent: 'center',
-    flexDirection: 'row-reverse',
+  strengthsContainer: {
+    flexDirection: 'row',
     flexWrap: 'wrap',
-    marginBottom: 30,
+    justifyContent: 'center',
+    marginTop: 20,
+  },
+  strengthItem: {
+    width: '45%',
+    padding: 10,
+    margin: 5,
+    borderWidth: 1,
+    borderColor: '#8A6F42',
+    borderRadius: 5,
+    backgroundColor: '#fff',
+  },
+  strengthText: {
+    fontSize: 16,
+    textAlign: 'center',
+    color: '#333',
   },
   input: {
     paddingHorizontal: 10,
     fontSize: 20,
     textAlign: 'center',
     fontWeight: 'bold',
+    marginBottom: 7,
   },
   input_name: {
     height: 60,

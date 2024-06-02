@@ -1,6 +1,5 @@
-/* eslint-disable react/self-closing-comp */
+/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable react-native/no-inline-styles */
-/* eslint-disable react/no-unstable-nested-components */
 import React, {useEffect, useState} from 'react';
 import {
   StatusBar,
@@ -10,7 +9,6 @@ import {
   FlatList,
   TouchableOpacity,
   RefreshControl,
-  ActivityIndicator,
   Image,
 } from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
@@ -74,6 +72,10 @@ const PostMain = () => {
   const [refreshing, setRefreshing] = useState(false);
   const [totalPages, setTotalPages] = useState(0);
 
+  const sortPostsByTimestamp = posts => {
+    return posts.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+  };
+
   const onRefresh = () => {
     setRefreshing(true);
     get_posts({
@@ -82,16 +84,13 @@ const PostMain = () => {
       .then(result => {
         if (result.status === 200) {
           setPosts(prevPosts => {
-            // Combine previous posts and new posts
-            const combinedPosts = [...prevPosts, ...result.data.data.content];
-            // Create a Set to remove duplicates
+            const combinedPosts = [...result.data.data.content, ...prevPosts];
             const uniquePosts = Array.from(
               new Set(combinedPosts.map(post => post.id)),
             ).map(id => combinedPosts.find(post => post.id === id));
-            return uniquePosts;
+            return sortPostsByTimestamp(uniquePosts);
           });
           setTotalPages(result.data.data.totalPages);
-          console.log(totalPages);
         }
       })
       .catch(err => {
@@ -104,17 +103,14 @@ const PostMain = () => {
 
   useEffect(() => {
     onRefresh();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // to get the role from Async Storage
   useEffect(() => {
     AsyncStorage.getItem('role').then(res => {
       setRole(res);
     });
   }, []);
 
-  // for the loader
   useEffect(() => {
     get_posts({
       page: page,
@@ -122,13 +118,11 @@ const PostMain = () => {
       .then(result => {
         if (result.status === 200) {
           setPosts(prevPosts => {
-            // Combine previous posts and new posts
             const combinedPosts = [...prevPosts, ...result.data.data.content];
-            // Create a Set to remove duplicates
             const uniquePosts = Array.from(
               new Set(combinedPosts.map(post => post.id)),
             ).map(id => combinedPosts.find(post => post.id === id));
-            return uniquePosts;
+            return sortPostsByTimestamp(uniquePosts);
           });
         }
       })
@@ -139,7 +133,7 @@ const PostMain = () => {
         setRefreshing(false);
       });
   }, [page]);
-  console.log('total pages - ', totalPages);
+
   return (
     <SafeAreaView style={styles.container}>
       {totalPages > 0 ? (
@@ -204,7 +198,6 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     textAlign: 'right',
   },
-
   title: {
     fontSize: 18,
     fontStyle: 'italic',
