@@ -10,7 +10,6 @@ Welcome to the Mashora frontend repository! This application is designed specifi
 - **Client Communication:** Facilitate direct communication between lawyers and clients.
 - **Case Management:** Organize and track cases with detailed information and status updates.
 - **Document Handling:** Download and display PDFs related to legal documents and cases.
-- **Multilingual Support:** Translate English legal terms to Arabic to cater to a diverse user base.
 
 ## Prerequisites
 
@@ -83,6 +82,56 @@ Follow these steps to get the Mashora frontend running locally:
    ```
 
    Ensure that Android Studio is properly configured and an Android emulator or physical device is connected.
+
+## Maestro Automation Tool
+
+To ensure the quality of the Mashora frontend, we utilize the Maestro automation tool for testing. Follow the steps below to install Maestro and run the test flows located in `MFE/automation_testing/flows`.
+
+### Installing Maestro
+
+1. **Download Maestro**
+
+   Download the latest version of Maestro from the official repository or website.
+
+2. **Install Maestro**
+
+   For macOS and Linux:
+
+   ```sh
+   curl -Ls "https://maestro.com/install.sh" | bash
+   ```
+
+   For Windows, download the installer and follow the installation instructions.
+
+3. **Verify Installation**
+
+   Ensure Maestro is installed correctly by running:
+
+   ```sh
+   maestro --version
+   ```
+
+### Running Test Flows
+
+1. **Navigate to the Automation Directory**
+
+   ```sh
+   cd MFE/automation_testing/flows
+   ```
+
+2. **Choose a Flow to Test**
+
+   Review the available test flows and choose the one you want to run. For example, to run `login_flow.yaml`, use the following command:
+
+   ```sh
+   maestro run login_flow.yaml
+   ```
+
+   Replace `login_flow.yaml` with the name of the flow you want to test.
+
+3. **Review Test Results**
+
+   After running the test, review the results to ensure all tests passed. If any tests failed, analyze the logs and debug the issues.
 
 ## Contributing
 
