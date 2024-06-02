@@ -1,0 +1,18 @@
+appId: com.mfe
+---
+- runFlow:
+    file: login.yaml
+    env:
+      USERNAME: 'zain_aburayya'
+      PASSWORD: '@Zain2003'
+- waitForAnimationToEnd:
+    timeout: 20000
+- tapOn:
+    point: '93%,6%'
+- tapOn: 'محفظتي'
+- tapOn: 'ادخل الحساب الذي تم الايداع منه ولماذا..'
+- inputText: 'Deposit into my account please'
+- tapOn: 'ادخل القيمة التي تريد تحويلها...'
+- inputText: 15
+- hideKeyboard
+- tapOn: 'طلب تأكيد الإيداع'

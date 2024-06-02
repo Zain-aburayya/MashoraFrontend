@@ -7,11 +7,30 @@ import {
   StatusBar,
   ActivityIndicator,
 } from 'react-native';
-import {GiftedChat} from 'react-native-gifted-chat';
+import {Bubble, GiftedChat} from 'react-native-gifted-chat';
 
 const ChatBot = () => {
   const [messages, setMessages] = useState([]);
   const [sendingMessage, setSendingMessage] = useState(false);
+
+  const renderBubble = props => (
+    <Bubble
+      {...props}
+      textStyle={{
+        right: {
+          color: 'white',
+        },
+        left: {
+          color: 'black',
+        },
+      }}
+      wrapperStyle={{
+        right: {
+          backgroundColor: '#8A6F42',
+        },
+      }}
+    />
+  );
 
   useEffect(() => {
     const fetchHistory = async () => {
@@ -101,16 +120,13 @@ const ChatBot = () => {
   return (
     <View style={styles.container}>
       {sendingMessage && <ActivityIndicator size="large" color="#0000ff" />}
-      {messages.length === 0 ? (
-        <Text style={styles.noMessagesText}>No messages yet</Text>
-      ) : (
-        <GiftedChat
-          messages={messages}
-          onSend={newMessages => onSend(newMessages)}
-          user={{_id: 1}}
-          placeholder="Type a message..."
-        />
-      )}
+      <GiftedChat
+        messages={messages}
+        onSend={newMessages => onSend(newMessages)}
+        user={{_id: 1}}
+        placeholder="اسأل عادل ليساعدك..."
+        renderBubble={renderBubble}
+      />
     </View>
   );
 };

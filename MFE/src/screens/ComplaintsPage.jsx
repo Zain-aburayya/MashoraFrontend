@@ -2,13 +2,13 @@ import {useNavigation} from '@react-navigation/native';
 import React from 'react';
 import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 
-function ButtonReuse({text, fieldName, aboutField}) {
+function ButtonReuse({text, navigationName}) {
   const navigation = useNavigation();
   return (
     <TouchableOpacity
       style={styles.button2}
       onPress={() => {
-        //navigation.navigate('SectionList');
+        navigation.navigate(navigationName);
       }}>
       <Text style={styles.buttonText2}>{text}</Text>
     </TouchableOpacity>
@@ -18,8 +18,9 @@ function ButtonReuse({text, fieldName, aboutField}) {
 function ComplaintsPage() {
   return (
     <View style={styles.container}>
-      <ButtonReuse text={'شكاوي العملاء'} />
-      <ButtonReuse text={'توثيق المحاميين'} />
+      {/* <ButtonReuse text={'شكاوي العملاء'} /> */}
+      <ButtonReuse text={'توثيق المحاميين'} navigationName={'LawyersList'} />
+      <ButtonReuse text={'المدفوعات'} navigationName={'PaymentApproval'} />
     </View>
   );
 }

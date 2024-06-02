@@ -1,0 +1,13 @@
+appId: com.mfe
+---
+- launchApp:
+    clearState: true
+- waitForAnimationToEnd:
+    timeout: 20000
+- tapOn:
+    point: '92%,89%'
+- tapOn: 'اسم المستخدم'
+- inputText: ${USERNAME}
+- tapOn: 'كلمة المرور'
+- inputText: ${PASSWORD}
+- tapOn: 'دخول'

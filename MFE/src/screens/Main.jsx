@@ -48,7 +48,6 @@ const LawyerMain = () => {
 
     return () => backHandler.remove();
   }, []);
-
   return (
     <View style={styles.container}>
       <View style={styles.topTab}>

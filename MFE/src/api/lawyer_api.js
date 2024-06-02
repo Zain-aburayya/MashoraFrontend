@@ -1,5 +1,6 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import ApiManager from './ApiManager';
+import RNFetchBlob from 'rn-fetch-blob';
 
 export const check_lawyer_certificate = async data => {
   try {
@@ -95,5 +96,66 @@ export const lawyer_update_strength = async data => {
   } catch (err) {
     console.error(err);
     throw err;
+  }
+};
+
+export const get_lawyer_fields = async data => {
+  try {
+    const token = await AsyncStorage.getItem('token');
+    const result = await ApiManager('/lawyers/myStrengths', {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    return result;
+  } catch (err) {
+    return err.response.data;
+  }
+};
+
+export const rate_lawyer = async data => {
+  try {
+    const token = await AsyncStorage.getItem('token');
+    const result = await ApiManager(
+      `/lawyers/rateLawyer?laywer_username=${data.username}`,
+      {
+        method: 'POST', // Assuming you are sending the ratings as a POST request
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: data.formData, // Assuming ratings is an object containing the ratings for each law field
+      },
+    );
+    return result;
+  } catch (err) {
+    return err.response.data;
+  }
+};
+
+export const lawyer_verification = async data => {
+  try {
+    console.log(data);
+    const token = await AsyncStorage.getItem('token');
+    const result = await ApiManager(`/lawyers/downloadPdf/${data.id}`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/pdf',
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    // Convert Blob to base64 string
+    const base64Data = await RNFetchBlob.fs.readFile(result.data, 'base64');
+    console.log(base64Data);
+
+    const filePath = `${RNFetchBlob.fs.dirs.DownloadDir}/file.pdf`;
+    await RNFetchBlob.fs.writeFile(filePath, base64Data, 'base64');
+    return filePath;
+  } catch (err) {
+    console.log('Error in lawyer_verification:', err);
+    throw err; // Rethrow the error to handle it in the component
   }
 };

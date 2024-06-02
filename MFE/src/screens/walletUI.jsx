@@ -1,88 +1,153 @@
 /* eslint-disable react-native/no-inline-styles */
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import {
   Image,
+  KeyboardAvoidingView,
   StyleSheet,
   Text,
   TextInput,
   TouchableOpacity,
   View,
+  Platform,
 } from 'react-native';
-
-// TODO Call an API to send the deposit verfication
-// TODO Call an API to get the balance and total
+import {SafeAreaView} from 'react-native-safe-area-context';
+import {get_balance, payment_deposit} from '../api/payment_api';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 function Wallet() {
   const [balance, setBalance] = useState(0);
-  const [total, setTotal] = useState(0);
-  const [cliqUser, setCliqUser] = useState();
+  const [amount, setAmount] = useState('');
+  const [body, setBody] = useState('');
+
+  const [role, setRole] = useState('');
+
+  useEffect(() => {
+    AsyncStorage.getItem('role').then(res => {
+      setRole(res);
+    });
+  }, []);
+
+  useEffect(() => {
+    get_balance()
+      .then(result => {
+        if (result.status === 200) {
+          setBalance(result.data.data);
+        }
+      })
+      .catch(error => {
+        console.log(error);
+      });
+  }, []);
+
+  function handleOnPress() {
+    payment_deposit({body: body, amount: parseFloat(amount)})
+      .then(result => {
+        if (result.status === 200) {
+          // TODO: Handle successful payment deposit
+          console.log('done');
+          setAmount('');
+          setBody('');
+        }
+      })
+      .catch(error => {
+        console.log(error);
+      });
+  }
+
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>محفظتي</Text>
-      <View style={[styles.cardsContainer]}>
-        <View style={styles.smallCard}>
-          <Text style={styles.titleFont}>إجمالي المدفوعات</Text>
-          <Text style={{fontSize: 16}}>{balance} دينار</Text>
+    <SafeAreaView style={styles.container}>
+      <KeyboardAvoidingView
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        style={styles.keyboardAvoidingView}>
+        <Text style={styles.title}>محفظتي</Text>
+        <View style={styles.cardsContainer}>
+          <View style={styles.card}>
+            <Text style={styles.titleFont}>رصيدك الحالي</Text>
+            <Text style={{fontSize: 16}}>{balance.toString()} دينار</Text>
+          </View>
         </View>
-        <View style={styles.smallCard}>
-          <Text style={styles.titleFont}>رصيدك الحالي</Text>
-          <Text style={{fontSize: 16}}>{total} دينار</Text>
+        <View style={styles.card}>
+          <Text style={{fontSize: 20, fontWeight: '900'}}>
+            الإيداع في المحفظة
+          </Text>
+          <Text style={{fontSize: 20, fontWeight: '500'}}>
+            المفوتر : منصة مَشُورَةٌ
+          </Text>
+          <Text style={{fontSize: 20, fontWeight: '500'}}>
+            الخدمة : إيداع في محفظة العميل
+          </Text>
+          <Text style={{fontSize: 20, fontWeight: '500'}}>
+            الاسم المستعار الخاص بخدمة كليك : mashora
+          </Text>
+          <Text style={{fontSize: 20, fontWeight: '500'}}>
+            رقم التحويل : IBAN00001247832
+          </Text>
         </View>
-      </View>
-      <View style={styles.card}>
-        <Text style={{fontSize: 20, fontWeight: '900'}}>
-          الإيداع في المحفظة
-        </Text>
-        <Text style={{fontSize: 20, fontWeight: '500'}}>
-          المفوتر : منصة مَشُورَةٌ
-        </Text>
-        <Text style={{fontSize: 20, fontWeight: '500'}}>
-          الخدمة : إيداع في محفظة العميل
-        </Text>
-        <Text style={{fontSize: 20, fontWeight: '500'}}>
-          الاسم المستعار الخاص بخدمة كليك : mashora
-        </Text>
-      </View>
-      <Text
-        style={{
-          fontSize: 18,
-          fontWeight: '700',
-          marginTop: 20,
-          marginBottom: 10,
-        }}>
-        أدخل اسم المستخدم الذي تم استخدامه للإيداع:
-      </Text>
-      <TextInput
-        style={[styles.input, {textAlign: 'right'}]}
-        placeholderTextColor={'black'}
-        value={cliqUser}
-        placeholder="ادخل اسم المستخدم..."
-        onChangeText={e => setCliqUser(e)}
-      />
-      <TouchableOpacity style={styles.button2} /*onPress={onPress}*/>
-        <Text style={styles.buttonText2}>طلب تأكيد الإيداع</Text>
-      </TouchableOpacity>
-      <Image
-        source={require('./Images/mashoralogo.png')}
-        style={styles.image}
-      />
-    </View>
+        {role === 'ROLE_CUSTOMER' && (
+          <>
+            <Text
+              style={{
+                fontSize: 18,
+                fontWeight: '700',
+                marginTop: 20,
+                marginBottom: 10,
+              }}>
+              أدخل المعلومات المطلوبة لإتمام طلب الإيداع...
+            </Text>
+            <TextInput
+              style={[styles.input, {textAlign: 'right'}]}
+              placeholderTextColor={'black'}
+              value={body}
+              placeholder="ادخل الحساب الذي تم الايداع منه ولماذا.."
+              onChangeText={e => setBody(e)}
+            />
+            <TextInput
+              style={[styles.input, {textAlign: 'right'}]}
+              placeholderTextColor={'black'}
+              value={amount}
+              keyboardType="numeric"
+              placeholder="ادخل القيمة التي تريد تحويلها..."
+              onChangeText={e => setAmount(e)}
+            />
+            <TouchableOpacity style={styles.button2} onPress={handleOnPress}>
+              <Text style={styles.buttonText2}>طلب تأكيد الإيداع</Text>
+            </TouchableOpacity>
+          </>
+        )}
+        <Image
+          source={require('./Images/mashoralogo.png')}
+          style={styles.image}
+        />
+      </KeyboardAvoidingView>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#f2efeb',
+    marginTop: 120,
+  },
+  keyboardAvoidingView: {
+    flex: 1,
+    width: '100%',
+    alignItems: 'center',
+  },
   card: {
-    flex: 0.3,
     width: '95%',
     borderWidth: 6,
     borderStyle: 'solid',
     borderColor: '#E6E0D7',
-    borderRadius: 25,
+    borderRadius: 20,
     backgroundColor: '#E6E0D7',
     position: 'relative',
     shadowColor: 'black',
     justifyContent: 'space-around',
     alignItems: 'center',
+    marginBottom: 10,
     shadowOffset: {
       width: 20,
       height: 20,
@@ -135,19 +200,12 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: '#8A6F42',
   },
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#f2efeb',
-  },
   cardsContainer: {
     flexDirection: 'row',
   },
   nameInput: {
     paddingHorizontal: 3,
   },
-
   input: {
     height: 60,
     width: 350,
@@ -200,7 +258,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row-reverse',
   },
   image: {
-    marginTop: 10,
+    marginTop: 20,
     marginBottom: -100,
     width: 120,
     height: 140,

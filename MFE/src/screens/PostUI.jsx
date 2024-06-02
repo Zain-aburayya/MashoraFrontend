@@ -14,10 +14,18 @@ import {
   View,
 } from 'react-native';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
-import {get_post_comments, set_comment} from '../api/post_api';
+import {
+  downvote_comment,
+  get_post_comments,
+  set_comment,
+  upvote_comment,
+} from '../api/post_api';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const Item = ({data, navigation, role}) => {
+  // console.log(data);
+  const upVotes = data.vote.upVotes;
+  const downVotes = data.vote.downVotes;
   const date = new Date(data.timestamp);
   const hours = String(date.getHours()).padStart(2, '0');
   const minutes = String(date.getMinutes()).padStart(2, '0');
@@ -44,18 +52,46 @@ const Item = ({data, navigation, role}) => {
       <Text style={styles.title}>{data.content}</Text>
 
       <View style={styles.bottomContainer}>
+        <Text>{hours + ':' + minutes}</Text>
+        <Text>{ymd}</Text>
+        <Text>{'أوافق (' + upVotes + ')'}</Text>
+        <Text>{'لا أوافق (' + downVotes + ')'}</Text>
+      </View>
+      <View style={styles.bottomContainer}>
         {role === 'ROLE_LAWYER' && (
           <>
-            <TouchableOpacity style={styles.button}>
+            <TouchableOpacity
+              style={styles.button}
+              onPress={() => {
+                upvote_comment({id: data.id})
+                  .then(result => {
+                    if (result.status === 201) {
+                      console.log(result.data);
+                    }
+                  })
+                  .catch(error => {
+                    console.log(error);
+                  });
+              }}>
               <Text>اوافق</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.button}>
+            <TouchableOpacity
+              style={styles.button}
+              onPress={() => {
+                downvote_comment({id: data.id})
+                  .then(result => {
+                    if (result.status === 201) {
+                      console.log(result.data);
+                    }
+                  })
+                  .catch(error => {
+                    console.log(error);
+                  });
+              }}>
               <Text>لا اوافق</Text>
             </TouchableOpacity>
           </>
         )}
-        <Text>{hours + ':' + minutes}</Text>
-        <Text>{ymd}</Text>
       </View>
     </View>
   );
@@ -97,12 +133,13 @@ function PostUI({route}) {
   }, []);
 
   function handleQuerySend({id}) {
-    console.log(id);
+    // console.log(id);
     set_comment({id: id, content: content})
       .then(result => {
         if (result.status === 201) {
-          console.log('comment -> ', result.data);
+          // console.log('comment -> ', result.data);
           setContent('');
+          onRefresh();
         }
       })
       .catch(err => {
@@ -142,7 +179,9 @@ function PostUI({route}) {
         </View>
       </View>
       <FlatList
-        data={comments}
+        data={comments.sort(
+          (a, b) => new Date(b.timestamp) - new Date(a.timestamp),
+        )}
         renderItem={({item}) => (
           <Item data={item} navigation={navigation} role={role} />
         )}
@@ -151,6 +190,7 @@ function PostUI({route}) {
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
         }
       />
+
       <View style={{margin: 35}}></View>
       {role === 'ROLE_LAWYER' && (
         <View style={styles.bottomTab}>
@@ -233,7 +273,7 @@ const styles = StyleSheet.create({
   },
   bottomContainer: {
     flexDirection: 'row-reverse',
-    justifyContent: 'space-between',
+    justifyContent: 'space-around',
     alignItems: 'center',
     marginTop: 20,
     marginBottom: -10,

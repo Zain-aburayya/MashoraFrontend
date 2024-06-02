@@ -27,6 +27,10 @@ import SectionList from './src/screens/SectionList';
 import SectionLawyer from './src/screens/SectionLawyer';
 import AdminMain from './src/screens/AdminMain';
 import EditStrength from './src/screens/EditStrength';
+import PaymentApproval from './src/screens/PaymentApproval';
+import RateLawyer from './src/screens/RateLawyer';
+import PdfView from './src/screens/PdfView';
+import LawyersList from './src/screens/LawyersList';
 const Stack = createNativeStackNavigator();
 
 function App() {
@@ -60,6 +64,9 @@ function App() {
           component={PostMain}
           options={{headerBackVisible: false}}
         />
+        <Stack.Screen name="RateLawyer" component={RateLawyer} />
+        <Stack.Screen name="PdfView" component={PdfView} />
+        <Stack.Screen name="LawyersList" component={LawyersList} />
         <Stack.Screen
           name="ChatList"
           component={ChatList}
@@ -92,6 +99,7 @@ function App() {
         />
         <Stack.Screen name="ForgetPassword" component={ForgetPassword} />
         <Stack.Screen name="EditStrength" component={EditStrength} />
+        <Stack.Screen name="PaymentApproval" component={PaymentApproval} />
         <Stack.Screen name="Splash" component={Splash} />
         <Stack.Screen
           name="ContactUs"

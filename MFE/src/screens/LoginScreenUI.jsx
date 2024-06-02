@@ -50,10 +50,10 @@ function LoginScreen() {
   }
 
   async function handleLogin() {
-    if (!isValidName(username, 'username') || !isValidPassword(password)) {
-      Alert.alert('خطأ في تسجيل الدخول', errorMessage, [{text: 'حسناً'}]);
-      return;
-    }
+    // if (!isValidName(username, 'username') || !isValidPassword(password)) {
+    //   Alert.alert('خطأ في تسجيل الدخول', errorMessage, [{text: 'حسناً'}]);
+    //   return;
+    // }
     console.log(username);
     try {
       //console.log('---', username);
@@ -156,6 +156,7 @@ function LoginScreen() {
         style={styles.input}
         placeholderTextColor={'black'}
         value={username}
+        color="black"
         placeholder="اسم المستخدم"
         onChangeText={e => handleOnChange(e, 'username')}
       />
@@ -165,6 +166,7 @@ function LoginScreen() {
         value={password}
         secureTextEntry={!showPassword}
         placeholder="كلمة المرور"
+        color="black"
         onChangeText={e => handleOnChange(e, 'password')}
       />
       <TouchableOpacity

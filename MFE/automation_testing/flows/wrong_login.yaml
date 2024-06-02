@@ -1,0 +1,14 @@
+appId: com.mfe
+---
+- launchApp:
+    clearState: true
+- waitForAnimationToEnd:
+    timeout: 20000
+- tapOn:
+    point: '92%,89%'
+- tapOn: 'اسم المستخدم'
+- inputText: 'zain_aburayya'
+- tapOn: 'كلمة المرور'
+- inputText: '@Zain9999' # Which is wrong the correct password is @Zain2003
+- tapOn: 'دخول'
+- assertVisible: 'خطأ في تسجيل الدخول'

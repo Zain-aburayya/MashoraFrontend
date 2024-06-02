@@ -1,7 +1,7 @@
 /* eslint-disable react-native/no-inline-styles */
 import React, {useState} from 'react';
 import Checkbox from '../components/Checkbox';
-import isValidName from '../validation/Username';
+import {isValidName, isSameLanguage} from '../validation/Username';
 import isValidEmail from '../validation/Email';
 import isValidPhoneNumber from '../validation/PhoneNumber';
 import {useNavigation} from '@react-navigation/native';
@@ -76,6 +76,7 @@ export default function UserRegister() {
   const errorMessages = {
     username: 'اسم المستخدم المدخل غير صالح.',
     name: 'يجب أن يكون الاسم الأول والأخير أكثر من حرفين وأقل من 26 حرفًا، ويجب أن يحتوي فقط على أحرف عربية.',
+    allName: 'يجب ان يكون الاسم الاول والاخير متشابهين في اللغة.',
     email: 'البريد الإلكتروني غير صحيح، يرجى إدخاله مرة أخرى.',
     phone:
       'رقم الهاتف غير صحيح، يرجى التأكد منه مرة أخرى.\nتنويه: يرجى إضافة رمز الدولة مع علامة +\n+9627********',
@@ -96,6 +97,10 @@ export default function UserRegister() {
       !isValidName(firstname, 'name')
     ) {
       Alert.alert('خطأ في الإسم الاول او الأخير', errorMessages.name, [
+        {text: 'حسناً'},
+      ]);
+    } else if (!isSameLanguage(firstname, lastname)) {
+      Alert.alert('خطأ في الإسم الاول و الأخير', errorMessages.allName, [
         {text: 'حسناً'},
       ]);
     } else if (!isValidEmail(email)) {
@@ -254,7 +259,7 @@ export default function UserRegister() {
         </TouchableOpacity>
         <Checkbox
           text="من خلال إنشاء حساب، فإنك توافق على شروط الاستخدام وسياسة
-          الخصوصية الخاصة بنا "
+          الخصوصية الخاصة بنا"
           onPress={isChecked => setCheckBoxState(isChecked)}
         />
         <ButtonReuse text="تسجيل" onPress={handlePress} />

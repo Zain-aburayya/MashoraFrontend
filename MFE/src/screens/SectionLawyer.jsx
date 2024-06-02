@@ -9,11 +9,13 @@ import {
   StyleSheet,
   Image,
   TouchableOpacity,
+  Alert,
 } from 'react-native';
 import {get_lawyer_rates} from '../api/lawyer_api';
 import firestore from '@react-native-firebase/firestore';
 import StarRating from 'react-native-star-rating';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import {deposit_lawyer} from '../api/payment_api';
 
 function SectionLawyer({route}) {
   const [userInfo, setUserInfo] = useState(null);
@@ -67,6 +69,36 @@ function SectionLawyer({route}) {
     getUser();
   }, [route.params.lawyerId]);
 
+  function handleStartAChat() {
+    Alert.alert(
+      'تنبيه!!',
+      'للتحدث مع المحامي ، يجب أولاً أن تعلم أنه سيتم خصم مبلغ يقدر بـ 10 دينارًا. إذا لم يكن لديك هذا المبلغ في محفظة التطبيق، يتعين عليك إيداع المال. وفي حال كان لديك المبلغ وأكملت الدفع، ستتمكن من الانتقال إلى الدردشة الخاصة مع المحامي.',
+      [
+        {
+          text: 'لا',
+          onPress: () => null,
+        },
+        {
+          text: 'نعم',
+          onPress: () => {
+            deposit_lawyer({
+              lawyerUsername: route.params.lawyerUsername,
+              amount: 10,
+            })
+              .then(result => {
+                if (result.status === 200) {
+                  navigation.navigate('Chat', {data: lawyer, id: userId});
+                }
+              })
+              .catch(error => {
+                console.log(error);
+              });
+          },
+        },
+      ],
+    );
+  }
+
   return (
     <View style={styles.container}>
       {userInfo ? (
@@ -103,7 +135,7 @@ function SectionLawyer({route}) {
           <TouchableOpacity
             style={styles.button2}
             onPress={() => {
-              navigation.navigate('Chat', {data: lawyer, id: userId});
+              handleStartAChat();
             }}>
             <Text style={styles.buttonText2}>ابدأ محادثتك</Text>
           </TouchableOpacity>

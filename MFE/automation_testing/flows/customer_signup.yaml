@@ -1,0 +1,24 @@
+appId: com.mfe
+---
+- launchApp
+- waitForAnimationToEnd:
+    timeout: 6000
+- tapOn:
+    point: '92%,89%'
+- tapOn: 'مستخدم جديد'
+- tapOn: 'اسم المستخدم'
+- inputText: 'maestro_username'
+- tapOn: 'الاسم الأول'
+- inputText: 'maestro'
+- tapOn: 'الاسم الأخير'
+- inputText: 'test'
+- tapOn: 'البريد الالكتروني'
+- inputText: 'zaaburayya@gmail.com'
+- tapOn: 'كلمة المرور'
+- inputText: '@Maestro1234'
+- tapOn: 'تأكيد كلمة المرور'
+- inputText: '@Maestro1234'
+- tapOn: 'إظهار كلمة السر'
+- hideKeyboard
+- tapOn: 'من خلال إنشاء حساب، فإنك توافق على شروط الاستخدام وسياسة الخصوصية الخاصة بنا'
+- tapOn: 'تسجيل'
