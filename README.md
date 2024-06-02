@@ -11,6 +11,11 @@ Welcome to the Mashora frontend repository! This application is designed specifi
 - **Case Management:** Organize and track cases with detailed information and status updates.
 - **Document Handling:** Download and display PDFs related to legal documents and cases.
 
+## Youtube Video
+
+- **Automation Testing:** Here is the link of automation testing in practice [youtube.com](https://youtu.be/jG2hdscdXOk?si=IV6asGV2fthF_WaU)
+
+
 ## Prerequisites
 
 Before you can run the Mashora frontend locally, you need to have the following installed:
