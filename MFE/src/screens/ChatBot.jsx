@@ -1,12 +1,6 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import React, {useState, useCallback, useEffect} from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  StatusBar,
-  ActivityIndicator,
-} from 'react-native';
+import {View, StyleSheet, StatusBar, ActivityIndicator} from 'react-native';
 import {Bubble, GiftedChat} from 'react-native-gifted-chat';
 
 const ChatBot = () => {
@@ -34,15 +28,21 @@ const ChatBot = () => {
 
   useEffect(() => {
     const fetchHistory = async () => {
+      console.log('Fetching history');
       try {
         const token = await AsyncStorage.getItem('token');
+        console.log('Token:', token);
+
         const response = await fetch('http://10.0.2.2:8080/api/adel/history', {
           headers: {
             Authorization: `Bearer ${token}`,
           },
         });
+
         const data = await response.json();
-        if (data.status === 'OK' && data.statusCode === 200) {
+        console.log('Data fetched:', data);
+
+        if (data.statusCode === 200) {
           const formattedMessages = data.data
             .map(item => [
               {
@@ -64,7 +64,10 @@ const ChatBot = () => {
             ])
             .flat();
 
+          console.log('Formatted messages:', formattedMessages);
           setMessages(formattedMessages.reverse());
+        } else {
+          console.log('Unexpected data format or status:', data);
         }
       } catch (error) {
         console.error('Error fetching message history:', error);
@@ -134,14 +137,7 @@ const ChatBot = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 0.88,
-    marginTop: StatusBar.currentHeight + 45 || 0,
-  },
-  noMessagesText: {
-    textAlign: 'center',
-    fontSize: 20,
-    fontStyle: 'normal',
-    fontWeight: 'bold',
-    marginTop: 20,
+    marginTop: StatusBar.currentHeight + 46 || 0,
   },
 });
 

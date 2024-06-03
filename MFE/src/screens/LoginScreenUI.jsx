@@ -50,10 +50,10 @@ function LoginScreen() {
   }
 
   async function handleLogin() {
-    // if (!isValidName(username, 'username') || !isValidPassword(password)) {
-    //   Alert.alert('خطأ في تسجيل الدخول', errorMessage, [{text: 'حسناً'}]);
-    //   return;
-    // }
+    if (!isValidName(username, 'username') || !isValidPassword(password)) {
+      Alert.alert('خطأ في تسجيل الدخول', errorMessage, [{text: 'حسناً'}]);
+      return;
+    }
     console.log(username);
     try {
       //console.log('---', username);
