@@ -118,20 +118,25 @@ export const get_lawyer_fields = async data => {
 export const rate_lawyer = async data => {
   try {
     const token = await AsyncStorage.getItem('token');
-    const result = await ApiManager(
-      `/lawyers/rateLawyer?laywer_username=${data.username}`,
+    console.log('da', data);
+    const response = await fetch(
+      `http://10.0.2.2:8080/api/lawyers/rateLawyer?username=${data.username}`,
       {
-        method: 'POST', // Assuming you are sending the ratings as a POST request
+        method: 'POST',
         headers: {
-          'Content-Type': 'application/json',
+          'Content-Type': 'multipart/form-data',
           Authorization: `Bearer ${token}`,
         },
-        body: data.formData, // Assuming ratings is an object containing the ratings for each law field
+        body: data.data,
       },
     );
-    return result;
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    return response;
   } catch (err) {
-    return err.response.data;
+    console.error(err);
+    throw err;
   }
 };
 
@@ -157,5 +162,37 @@ export const lawyer_verification = async data => {
   } catch (err) {
     console.log('Error in lawyer_verification:', err);
     throw err; // Rethrow the error to handle it in the component
+  }
+};
+
+export const not_approved_lawyers = async data => {
+  try {
+    const token = await AsyncStorage.getItem('token');
+    const result = await ApiManager('/auth/notApproved', {
+      method: 'GET', // Assuming you are sending the ratings as a POST request
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    return result;
+  } catch (err) {
+    return err.response.data;
+  }
+};
+
+export const approve_lawyer = async data => {
+  try {
+    const token = await AsyncStorage.getItem('token');
+    const result = await ApiManager(`/auth/approveLawyer/${data.id}`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    return result;
+  } catch (err) {
+    return err.response.data;
   }
 };

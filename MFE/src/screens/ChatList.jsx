@@ -38,7 +38,6 @@ const ChatList = () => {
       try {
         const storedId = await AsyncStorage.getItem('USERID');
         setId(storedId);
-        const email = await AsyncStorage.getItem('username');
         const tempData = [];
         const usersSnapshot = await firestore()
           .collection('users')

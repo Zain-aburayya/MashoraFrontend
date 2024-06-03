@@ -2,9 +2,10 @@
 /* eslint-disable react-native/no-inline-styles */
 import {View, Text, StyleSheet, Alert, TouchableOpacity} from 'react-native';
 import React, {useCallback, useEffect, useState} from 'react';
-import {GiftedChat, Bubble, Avatar} from 'react-native-gifted-chat';
+import {GiftedChat, Bubble} from 'react-native-gifted-chat';
 import {useNavigation, useRoute} from '@react-navigation/native';
 import firestore from '@react-native-firebase/firestore';
+import {deposit_lawyer} from '../api/payment_api';
 
 const Chat = () => {
   const [messageList, setMessageList] = useState([]);
@@ -109,26 +110,42 @@ const Chat = () => {
       setMessageList(previousMessages =>
         GiftedChat.append(previousMessages, messages),
       );
+
+      const docId1 = route.params.id + route.params.data.userId;
+      const docId2 = route.params.data.userId + route.params.id;
+
+      // Add the message to both chat document formats
       firestore()
         .collection('chats')
-        .doc('' + route.params.id + route.params.data.userId)
+        .doc(docId1)
         .collection('messages')
         .add(myMsg);
       firestore()
         .collection('chats')
-        .doc('' + route.params.data.userId + route.params.id)
+        .doc(docId2)
         .collection('messages')
         .add(myMsg);
 
-      // Check if the chat document already exists
-      const chatRef = firestore()
-        .collection('chats')
-        .doc(route.params.id + route.params.data.userId);
-      const chatDoc = await chatRef.get();
+      // Check if the chat document with docId1 already exists
+      const chatRef1 = firestore().collection('chats').doc(docId1);
+      const chatDoc1 = await chatRef1.get();
 
-      // If chat document doesn't exist, create it with status set to 'open'
-      if (!chatDoc.exists) {
-        await chatRef.set({
+      // If chat document with docId1 doesn't exist, create it with status set to 'open'
+      if (!chatDoc1.exists) {
+        await chatRef1.set({
+          status: 'open',
+          feedback: 'open',
+          // Add any other initial fields you need for the chat document
+        });
+      }
+
+      // Check if the chat document with docId2 already exists
+      const chatRef2 = firestore().collection('chats').doc(docId2);
+      const chatDoc2 = await chatRef2.get();
+
+      // If chat document with docId2 doesn't exist, create it with status set to 'open'
+      if (!chatDoc2.exists) {
+        await chatRef2.set({
           status: 'open',
           feedback: 'open',
           // Add any other initial fields you need for the chat document
@@ -138,44 +155,93 @@ const Chat = () => {
     [chatStatus],
   );
 
-  if (chatStatus === 'closed' && feedbackStatus === 'open') {
+  function handleStartAChat() {
+    Alert.alert(
+      'تنبيه!!',
+      'للتحدث مع المحامي ، يجب أولاً أن تعلم أنه سيتم خصم مبلغ يقدر بـ 10 دينارًا. إذا لم يكن لديك هذا المبلغ في محفظة التطبيق، يتعين عليك إيداع المال. وفي حال كان لديك المبلغ وأكملت الدفع، ستتمكن من الانتقال إلى الدردشة الخاصة مع المحامي.',
+      [
+        {
+          text: 'لا',
+          onPress: () => null,
+        },
+        {
+          text: 'نعم',
+          onPress: async () => {
+            try {
+              const result = await deposit_lawyer({
+                lawyerUsername: route.params.data.username,
+                amount: 10,
+              });
+
+              if (result.status === 200) {
+                const docId1 = route.params.id + route.params.data.userId;
+                const docId2 = route.params.data.userId + route.params.id;
+
+                // Update the status of both chat documents to 'open'
+                await firestore().collection('chats').doc(docId1).set(
+                  {
+                    status: 'open',
+                    feedback: 'open',
+                  },
+                  {merge: true},
+                );
+
+                await firestore().collection('chats').doc(docId2).set(
+                  {
+                    status: 'open',
+                    feedback: 'open',
+                  },
+                  {merge: true},
+                );
+
+                // Update local state
+                setChatStatus('open');
+                setFeedbackStatus('open');
+
+                navigation.navigate('Chat', {
+                  data: route.params.data,
+                  id: route.params.id,
+                });
+              }
+            } catch (error) {
+              console.log(error);
+            }
+          },
+        },
+      ],
+    );
+  }
+
+  console.log('here ', chatStatus);
+  if (chatStatus === 'closed') {
     return (
       <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
         <Text style={{fontSize: 20, fontWeight: 'bold', marginBottom: 20}}>
           المحادثة تم إغلاقها...
         </Text>
+        {route.params.data.role !== 'ROLE_CUSTOMER' &&
+          feedbackStatus !== 'closed' && (
+            <TouchableOpacity
+              style={styles.button2}
+              onPress={() => {
+                navigation.navigate('RateLawyer', {
+                  lawyerUsername: route.params.data.username,
+                  lawyerUserId: route.params.data.userId,
+                  customerUserId: route.params.id,
+                });
+              }}>
+              <Text style={styles.buttonText2}>
+                قم بتقييم المحامي من فضلك..
+              </Text>
+            </TouchableOpacity>
+          )}
         {route.params.data.role !== 'ROLE_CUSTOMER' && (
           <TouchableOpacity
-            style={styles.button2}
+            style={[styles.button2, {marginTop: 9}]}
             onPress={() => {
-              navigation.navigate('RateLawyer', {
-                lawyerUsername: route.params.data.username,
-                lawyerUserId: route.params.data.userId,
-                customerUserId: route.params.id,
-              });
-              // const handleFeedbackSubmit = async () => {
-
-              // Update feedback status to 'closed'
-              // await firestore()
-              //   .collection('chats')
-              //   .doc(route.params.id + route.params.data.userId)
-              //   .update({
-              //     feedback: 'closed',
-              //   });
-
-              // await firestore()
-              //   .collection('chats')
-              //   .doc(route.params.data.userId + route.params.id)
-              //   .update({
-              //     feedback: 'closed',
-              //   });
-
-              // setFeedbackStatus('closed'); // Update local feedback state
-
-              // Alert.alert('Thank you for your feedback.');
-              // };
+              handleStartAChat();
             }}>
-            <Text style={styles.buttonText2}>قم بتقييم المحامي من فضلك..</Text>
+            <Text style={styles.buttonText2}>ابدأ محادثتك</Text>
           </TouchableOpacity>
         )}
       </View>

@@ -1,3 +1,6 @@
+/* eslint-disable react-native/no-inline-styles */
+/* eslint-disable no-shadow */
+/* eslint-disable no-catch-shadow */
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, {useState, useEffect} from 'react';
 import {View, ActivityIndicator, Text} from 'react-native';

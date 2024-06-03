@@ -11,19 +11,13 @@ import {
 import React, {useEffect, useState} from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {useNavigation} from '@react-navigation/native';
-
-const mockUsers = [
-  {id: '1', username: 'John Doe'},
-  {id: '2', username: 'Jane Smith'},
-  {id: '3', username: 'Alice Johnson'},
-  {id: '4', username: 'Bob Brown'},
-  {id: '5', username: 'Charlie Davis'},
-  // Add more mock users as needed
-];
+import {approve_lawyer, not_approved_lawyers} from '../api/lawyer_api';
 
 const LawyersList = () => {
   const [token, setToken] = useState();
   const navigation = useNavigation();
+  const [users, setUsers] = useState([]);
+  const [refreshing, setRefreshing] = useState(false);
 
   useEffect(() => {
     AsyncStorage.getItem('token').then(res => {
@@ -31,24 +25,68 @@ const LawyersList = () => {
     });
   }, []);
 
+  const fetchNotApprovedLawyers = () => {
+    setRefreshing(true);
+    not_approved_lawyers()
+      .then(result => {
+        if (result.status === 200) {
+          //console.log(result.data);
+          setUsers(result.data);
+        }
+      })
+      .catch(error => {
+        console.log(error);
+      })
+      .finally(() => {
+        setRefreshing(false);
+      });
+  };
+
+  useEffect(() => {
+    fetchNotApprovedLawyers();
+  }, []);
+
+  const handleApproval = id => {
+    approve_lawyer({id: id})
+      .then(result => {
+        if (result.status === 200) {
+          //console.log('Approving lawyer with id:', id);
+          //console.log(result.data);
+          fetchNotApprovedLawyers(); // Refresh the list after approval
+        }
+      })
+      .catch(error => {
+        console.log(error);
+      });
+  };
+
   return (
     <View style={styles.container}>
       <FlatList
-        data={mockUsers}
+        data={users}
         keyExtractor={item => item.id}
         renderItem={({item}) => (
-          <TouchableOpacity
-            style={styles.userItem}
-            onPress={() => {
-              navigation.navigate('PdfView', {token: token, id: item.id});
-            }}>
-            <Image
-              source={require('./Images/profile.png')}
-              style={styles.userIcon}
-            />
-            <Text style={styles.name}>{item.username}</Text>
-          </TouchableOpacity>
+          <View style={styles.userItem}>
+            <TouchableOpacity
+              style={styles.userDetails}
+              onPress={() => {
+                navigation.navigate('PdfView', {token: token, id: item.id});
+              }}>
+              <Image
+                source={require('./Images/profile.png')}
+                style={styles.userIcon}
+              />
+              <Text style={styles.name}>{item.username}</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.approvalButton}
+              onPress={() => handleApproval(item.id)}>
+              <Text style={styles.approvalButtonText}>توثيق</Text>
+            </TouchableOpacity>
+          </View>
         )}
+        refreshing={refreshing}
+        onRefresh={fetchNotApprovedLawyers}
       />
     </View>
   );
@@ -58,22 +96,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 0.85,
     marginTop: StatusBar.currentHeight + 45 || 0,
-  },
-  topTab: {
-    position: 'absolute',
-    top: 0,
-    width: '100%',
-    height: 60,
-    backgroundColor: '#DAD2C5',
-    borderColor: 'rgba(110, 101, 85, 0.3)',
-    borderWidth: 1,
-    flexDirection: 'row-reverse',
-    justifyContent: 'space-between',
-  },
-  title: {
-    color: 'purple',
-    fontSize: 20,
-    fontWeight: '600',
   },
   userItem: {
     width: Dimensions.get('window').width - 50,
@@ -86,6 +108,11 @@ const styles = StyleSheet.create({
     paddingLeft: 20,
     alignItems: 'center',
     backgroundColor: '#DAD2C9',
+    justifyContent: 'space-between',
+  },
+  userDetails: {
+    flexDirection: 'row',
+    alignItems: 'center',
   },
   userIcon: {
     width: 60,
@@ -94,6 +121,16 @@ const styles = StyleSheet.create({
   name: {
     color: 'black',
     marginLeft: 20,
+    fontSize: 20,
+  },
+  approvalButton: {
+    backgroundColor: 'green',
+    padding: 10,
+    borderRadius: 5,
+    marginRight: 10,
+  },
+  approvalButtonText: {
+    color: 'white',
     fontSize: 20,
   },
 });

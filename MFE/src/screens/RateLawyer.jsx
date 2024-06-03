@@ -1,25 +1,19 @@
-/* eslint-disable react-hooks/exhaustive-deps */
-/* eslint-disable react-native/no-inline-styles */
 import {useNavigation} from '@react-navigation/native';
-import React, {useEffect, useState} from 'react';
+import React, {useState} from 'react';
 import {
   View,
   Text,
   StatusBar,
   StyleSheet,
-  Image,
   TouchableOpacity,
   Alert,
 } from 'react-native';
-import {get_lawyer_rates, rate_lawyer} from '../api/lawyer_api';
 import firestore from '@react-native-firebase/firestore';
 import StarRating from 'react-native-star-rating';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import {deposit_lawyer} from '../api/payment_api';
+import {rate_lawyer} from '../api/lawyer_api';
 
 function RateLawyer({route}) {
   const username = route.params.lawyerUsername;
-  console.log(username);
   const [ratings, setRatings] = useState({
     civilLaw: 0,
     commercialLaw: 0,
@@ -47,29 +41,29 @@ function RateLawyer({route}) {
         .forEach(([field, rating]) => {
           formData.append(field, rating);
         });
+
+      console.log('FormData:', formData);
       rate_lawyer({data: formData, username: username})
         .then(result => {
           if (result.status === 200) {
-            console.log(result.data);
             const handleFeedbackSubmit = async () => {
-              // Update feedback status to 'closed'
               await firestore()
                 .collection('chats')
-                .doc(route.params.id + route.params.data.userId)
+                .doc(route.params.lawyerUserId + route.params.customerUserId)
                 .update({
                   feedback: 'closed',
+                  status: 'closed',
                 });
 
               await firestore()
                 .collection('chats')
-                .doc(route.params.data.userId + route.params.id)
+                .doc(route.params.customerUserId + route.params.lawyerUserId)
                 .update({
                   feedback: 'closed',
+                  status: 'closed',
                 });
 
-              // setFeedbackStatus('closed'); // Update local feedback state
               navigation.navigate('Main');
-              // Alert.alert('Thank you for your feedback.');
             };
             handleFeedbackSubmit();
           }
@@ -77,7 +71,6 @@ function RateLawyer({route}) {
         .catch(error => {
           console.log(error);
         });
-      console.log(username);
     } catch (error) {
       Alert.alert('Failed to submit ratings. Please try again later.');
     }
@@ -127,52 +120,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: '#F2EFEB',
     paddingTop: StatusBar.currentHeight,
-  },
-  card: {
-    width: 390,
-    borderRadius: 15,
-    paddingHorizontal: 10,
-    paddingVertical: 20,
-    marginBottom: 10,
-    backgroundColor: '#CEC3B0',
-    shadowColor: 'black',
-    shadowOffset: {
-      width: 20,
-      height: 20,
-    },
-    shadowOpacity: 1,
-    shadowRadius: 0,
-    elevation: 10, // for Android shadow
-    alignItems: 'flex-end', // Align text to the right
-  },
-  title: {
-    fontSize: 28,
-    fontWeight: 'bold',
-    textAlign: 'right',
-  },
-  title1: {
-    fontSize: 18,
-    textAlign: 'right',
-  },
-  image: {
-    width: 100,
-    height: 100,
-  },
-  imagePost: {
-    width: 100,
-    height: 100,
-  },
-  profileContainer: {
-    flexDirection: 'row-reverse',
-    alignItems: 'center',
-  },
-  button: {
-    backgroundColor: '#f2efeb',
-    paddingHorizontal: 15,
-    paddingVertical: 5,
-    borderRadius: 12,
-    borderColor: '#8A6F42',
-    borderWidth: 2,
   },
   fieldContainer: {
     flexDirection: 'row-reverse',
