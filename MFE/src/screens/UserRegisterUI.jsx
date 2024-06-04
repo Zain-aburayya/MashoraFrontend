@@ -87,7 +87,7 @@ export default function UserRegister() {
   };
 
   function handlePress() {
-    console.log(username);
+    // console.log(username);
     if (!isValidName(username, 'username')) {
       Alert.alert('خطأ في اسم المستخدم', errorMessages.username, [
         {text: 'حسناً'},

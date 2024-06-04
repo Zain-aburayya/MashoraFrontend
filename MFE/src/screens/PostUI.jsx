@@ -1,3 +1,4 @@
+/* eslint-disable eslint-comments/no-unused-disable */
 /* eslint-disable react/self-closing-comp */
 /* eslint-disable react-native/no-inline-styles */
 import {useNavigation} from '@react-navigation/native';
@@ -21,9 +22,9 @@ import {
   upvote_comment,
 } from '../api/post_api';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import {not_approved_lawyers} from '../api/lawyer_api';
 
-const Item = ({data, navigation, role}) => {
-  // console.log(data);
+const Item = ({data, navigation, role, verfiedLawyers}) => {
   const upVotes = data.vote.upVotes;
   const downVotes = data.vote.downVotes;
   const date = new Date(data.timestamp);
@@ -32,6 +33,12 @@ const Item = ({data, navigation, role}) => {
   const month = String(date.getMonth() + 1).padStart(2, '0');
   const day = String(date.getDate()).padStart(2, '0');
   const ymd = date.getFullYear() + '-' + month + '-' + day;
+
+  // Check if the lawyer is verified
+  const isVerified = verfiedLawyers.some(
+    lawyer => lawyer.username === data.username,
+  );
+
   return (
     <View style={styles.item}>
       <View>
@@ -47,6 +54,9 @@ const Item = ({data, navigation, role}) => {
             style={styles.image}
           />
           <Text style={styles.title}>{data.username}</Text>
+          {!isVerified && (
+            <FontAwesome name="check-circle" size={16} color={'blue'} />
+          )}
         </TouchableOpacity>
       </View>
       <Text style={styles.title}>{data.content}</Text>
@@ -103,6 +113,7 @@ function PostUI({route}) {
   const [content, setContent] = useState('');
   const [role, setRole] = useState('');
   const [refreshing, setRefreshing] = useState(false);
+  const [verfiedLawyers, setVerfiedLawyers] = useState([]);
   const navigation = useNavigation();
 
   const onRefresh = () => {
@@ -122,6 +133,18 @@ function PostUI({route}) {
   };
 
   useEffect(() => {
+    not_approved_lawyers()
+      .then(result => {
+        if (result.status === 200) {
+          setVerfiedLawyers(result.data);
+        }
+      })
+      .catch(error => {
+        console.log(error);
+      });
+  }, []);
+
+  useEffect(() => {
     onRefresh();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -133,11 +156,9 @@ function PostUI({route}) {
   }, []);
 
   function handleQuerySend({id}) {
-    // console.log(id);
     set_comment({id: id, content: content})
       .then(result => {
         if (result.status === 201) {
-          // console.log('comment -> ', result.data);
           setContent('');
           onRefresh();
         }
@@ -183,7 +204,12 @@ function PostUI({route}) {
           (a, b) => new Date(b.timestamp) - new Date(a.timestamp),
         )}
         renderItem={({item}) => (
-          <Item data={item} navigation={navigation} role={role} />
+          <Item
+            data={item}
+            navigation={navigation}
+            role={role}
+            verfiedLawyers={verfiedLawyers}
+          />
         )}
         keyExtractor={item => item.id}
         refreshControl={
@@ -260,6 +286,7 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontStyle: 'italic',
     textAlign: 'right',
+    marginLeft: 10,
   },
   input: {
     height: 60,
