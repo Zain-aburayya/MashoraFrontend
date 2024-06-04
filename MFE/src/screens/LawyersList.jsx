@@ -1,3 +1,4 @@
+/* eslint-disable react-native/no-inline-styles */
 import {
   View,
   Text,
@@ -59,6 +60,7 @@ const LawyersList = () => {
         console.log(error);
       });
   };
+  console.log('fdfdf', users);
 
   return (
     <View style={styles.container}>
@@ -66,24 +68,32 @@ const LawyersList = () => {
         data={users}
         keyExtractor={item => item.id}
         renderItem={({item}) => (
-          <View style={styles.userItem}>
-            <TouchableOpacity
-              style={styles.userDetails}
-              onPress={() => {
-                navigation.navigate('PdfView', {token: token, id: item.id});
-              }}>
-              <Image
-                source={require('./Images/profile.png')}
-                style={styles.userIcon}
-              />
-              <Text style={styles.name}>{item.username}</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={styles.approvalButton}
-              onPress={() => handleApproval(item.id)}>
-              <Text style={styles.approvalButtonText}>توثيق</Text>
-            </TouchableOpacity>
-          </View>
+          <>
+            <View style={styles.userItem}>
+              <View>
+                <TouchableOpacity
+                  style={styles.userDetails}
+                  onPress={() => {
+                    navigation.navigate('PdfView', {token: token, id: item.id});
+                  }}>
+                  <Image
+                    source={require('./Images/profile.png')}
+                    style={styles.userIcon}
+                  />
+                  <Text style={styles.name}>{item.username}</Text>
+                </TouchableOpacity>
+                <Text style={{marginLeft: 80, fontSize: 20}}>
+                  {item.firstName + ' ' + item.lastName}
+                </Text>
+              </View>
+
+              <TouchableOpacity
+                style={styles.approvalButton}
+                onPress={() => handleApproval(item.id)}>
+                <Text style={styles.approvalButtonText}>توثيق</Text>
+              </TouchableOpacity>
+            </View>
+          </>
         )}
         refreshing={refreshing}
         onRefresh={fetchNotApprovedLawyers}
@@ -102,7 +112,7 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     marginTop: 20,
     flexDirection: 'row',
-    height: 70,
+    height: 100,
     borderWidth: 0.5,
     borderRadius: 10,
     paddingLeft: 20,

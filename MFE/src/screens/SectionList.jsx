@@ -1,5 +1,7 @@
 /* eslint-disable react-native/no-inline-styles */
 import {useNavigation} from '@react-navigation/native';
+import FontAwesome from 'react-native-vector-icons/FontAwesome';
+
 import React, {useEffect, useState} from 'react';
 import {
   FlatList,
@@ -11,10 +13,14 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import {get_lawyers_field} from '../api/lawyer_api';
+import {get_lawyers_field, not_approved_lawyers} from '../api/lawyer_api';
 import StarRating from 'react-native-star-rating';
 
-const Item = ({data}) => {
+const Item = ({data, verfiedLawyers}) => {
+  console.log(data);
+  const isVerified = verfiedLawyers.some(
+    lawyer => lawyer.username === data.userName,
+  );
   const navigation = useNavigation();
   const fields = data.topLawFields;
   const translationDict = {
@@ -30,8 +36,8 @@ const Item = ({data}) => {
   const translatedFields = fields.map(field => translationDict[field]);
   const fieldsString = translatedFields.join(' - ');
   const avg = data.lawFieldRate.rate;
-  console.log(data.lawFieldRate);
-  console.log(data.userName);
+  //console.log(data.lawFieldRate);
+  //console.log(data.userName);
   return (
     <TouchableOpacity
       style={styles.item}
@@ -46,6 +52,9 @@ const Item = ({data}) => {
         <Text style={styles.title1}>
           {data.firstName + ' ' + data.lastName}
         </Text>
+        {!isVerified && (
+          <FontAwesome name="check-circle" size={21} color={'blue'} />
+        )}
       </View>
       <Text style={{}}>{fieldsString}</Text>
       <View style={styles.starContainer}>
@@ -64,6 +73,7 @@ const Item = ({data}) => {
 
 function SectionList({route}) {
   const [lawyers, setLawyers] = useState([]);
+  const [verfiedLawyers, setVerfiedLawyers] = useState([]);
   const [refreshing, setRefreshing] = useState(false);
   console.log(route.params.fieldName);
   const onRefresh = () => {
@@ -87,6 +97,18 @@ function SectionList({route}) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  useEffect(() => {
+    not_approved_lawyers()
+      .then(result => {
+        if (result.status === 200) {
+          setVerfiedLawyers(result.data);
+        }
+      })
+      .catch(error => {
+        console.log(error);
+      });
+  }, []);
+
   return (
     <View style={styles.container}>
       <View style={styles.card}>
@@ -95,7 +117,9 @@ function SectionList({route}) {
       </View>
       <FlatList
         data={lawyers}
-        renderItem={({item}) => <Item data={item} />}
+        renderItem={({item}) => (
+          <Item data={item} verfiedLawyers={verfiedLawyers} />
+        )}
         keyExtractor={item => item.id}
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
@@ -155,6 +179,7 @@ const styles = StyleSheet.create({
   title1: {
     fontSize: 23,
     textAlign: 'right',
+    marginLeft: 10,
   },
   input: {
     height: 60,

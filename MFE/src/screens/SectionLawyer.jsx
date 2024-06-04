@@ -124,7 +124,7 @@ function SectionLawyer({route}) {
               <StarRating
                 disabled={true}
                 maxStars={5}
-                rating={fieldDetail.rate / 2}
+                rating={fieldDetail.rate}
                 fullStarColor={'gold'}
                 emptyStarColor={'gray'}
                 starSize={20}

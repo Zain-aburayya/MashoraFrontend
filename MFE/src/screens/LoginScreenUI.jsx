@@ -11,7 +11,7 @@ import React, {useState} from 'react';
 import {useNavigation} from '@react-navigation/native';
 import {isValidPassword} from '../validation/Password';
 import {user_login} from '../api/user_api';
-import isValidName from '../validation/Username';
+import {isValidName} from '../validation/Username';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import firestore from '@react-native-firebase/firestore';
 import {check_lawyer_certificate} from '../api/lawyer_api';
@@ -50,10 +50,10 @@ function LoginScreen() {
   }
 
   async function handleLogin() {
-    if (!isValidName(username, 'username') || !isValidPassword(password)) {
-      Alert.alert('خطأ في تسجيل الدخول', errorMessage, [{text: 'حسناً'}]);
-      return;
-    }
+    // if (!isValidName(username, 'username') || !isValidPassword(password)) {
+    //   Alert.alert('خطأ في تسجيل الدخول', errorMessage, [{text: 'حسناً'}]);
+    //   return;
+    // }
     console.log(username);
     try {
       //console.log('---', username);
